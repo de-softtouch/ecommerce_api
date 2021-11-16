@@ -21,6 +21,12 @@ public class UserDTO {
 
     private String fullName;
 
+    private String username;
+
+    private Date dob;
+
+    private String profileImg;
+
     private Integer gender;
 
     private Integer verificationCode;

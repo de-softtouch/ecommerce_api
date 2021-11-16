@@ -34,9 +34,15 @@ public class User {
 
     private String fullName;
 
+    private String profileImg;
+
+    private String username;
+
     private Integer gender;
 
     private Integer verificationCode;
+
+    private Date dob;
 
     @Column(columnDefinition = "tinyint(2) default 0")
     private Integer active;
@@ -45,7 +51,7 @@ public class User {
     @Enumerated(EnumType.ORDINAL)
     private AuthenticateProvider authProvider;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
