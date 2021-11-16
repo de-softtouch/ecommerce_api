@@ -30,6 +30,8 @@ public class User {
     @Column(unique = true)
     private String phone;
 
+    private String password;
+
     private String fullName;
 
     private Integer gender;
