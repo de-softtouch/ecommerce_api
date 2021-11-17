@@ -29,7 +29,7 @@ public class UserDTO {
 
     private Integer gender;
 
-    private Integer verificationCode;
+    private String verificationCode;
 
     private Integer active;
 

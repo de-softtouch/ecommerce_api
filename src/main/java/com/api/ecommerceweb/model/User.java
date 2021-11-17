@@ -40,7 +40,7 @@ public class User {
 
     private Integer gender;
 
-    private Integer verificationCode;
+    private String verificationCode;
 
     private Date dob;
 
