@@ -103,6 +103,7 @@ public class AuthHelper {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setActive(1);
+            user.setVerificationCode(null);
             userRepo.save(user);
             return ResponseEntity.ok("Activated account success!");
         }
