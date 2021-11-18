@@ -1,6 +1,7 @@
 package com.api.ecommerceweb.controller.member;
 
 import com.api.ecommerceweb.request.AccountUpdateRequest;
+import com.api.ecommerceweb.request.AddressRequest;
 import com.api.ecommerceweb.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,21 @@ public class MemberController {
             @ModelAttribute @Valid AccountUpdateRequest accountUpdateRequest,
             @RequestParam(value = "avt", required = false) MultipartFile multipartFile) {
         return memberService.updateCurrentUserDetails(accountUpdateRequest, multipartFile);
+    }
+
+    @GetMapping("/addresses")
+    public ResponseEntity<?> getAddresses() {
+        return memberService.getAddresses();
+    }
+
+    @PostMapping("/addresses")
+    public ResponseEntity<?> updateAddress(@RequestBody @Valid AddressRequest addressRequest) {
+        return memberService.updateAddress(addressRequest);
+    }
+
+    @DeleteMapping("/addresses/{id}")
+    public ResponseEntity<?> deleteAddress(@PathVariable long id) {
+        return memberService.deleteAddress(id);
     }
 
     @GetMapping("/files")

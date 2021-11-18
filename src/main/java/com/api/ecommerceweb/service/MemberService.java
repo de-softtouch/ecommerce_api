@@ -3,6 +3,7 @@ package com.api.ecommerceweb.service;
 import com.api.ecommerceweb.controller.member.ResetPasswordRequest;
 import com.api.ecommerceweb.helper.MemberHelper;
 import com.api.ecommerceweb.request.AccountUpdateRequest;
+import com.api.ecommerceweb.request.AddressRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -33,5 +34,17 @@ public class MemberService {
 
     public ResponseEntity<?> resetPassword(ResetPasswordRequest resetPasswordRequest) {
         return memberHelper.resetPassword(resetPasswordRequest);
+    }
+
+    public ResponseEntity<?> getAddresses() {
+        return memberHelper.getAddresses();
+    }
+
+    public ResponseEntity<?> updateAddress(AddressRequest addressRequest) {
+        return memberHelper.updateAddress(addressRequest);
+    }
+
+    public ResponseEntity<?> deleteAddress(long id) {
+        return memberHelper.deleteAddress(id);
     }
 }

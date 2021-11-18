@@ -37,11 +37,14 @@ public class Address {
     private String addressDetails;
 
     //type of address is home(0) or work(1) place
-    @Column(name = "type",columnDefinition ="tinyint(2) default 0" )
+    @Column(name = "type", columnDefinition = "tinyint(2) default 0")
     private Integer type;
 
     @Column(name = "is_default", columnDefinition = "tinyint(2) default 0")
     private Integer isDefault;
+
+    @Column(columnDefinition = "tinyint(2) default 1")
+    private Integer status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
