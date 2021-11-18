@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
+import java.util.Random;
 
 @Component("MailUtil")
 @RequiredArgsConstructor
@@ -18,7 +19,7 @@ public class MailUtil {
     private final String SENDER_NAME = "Sheppo Ecommerce";
 
     public void sendVerificationCode(String receivedEmail, String verificationCode) throws MessagingException, UnsupportedEncodingException {
-        final String subject = "Verification Code";
+        final String subject = "Account Verification Code";
         String content =
                 "Your verification code is:<br>"
                         + "<h2 style=\"color: blueviolet; font-weight: bolder\">[[code]]</h2>"
@@ -32,6 +33,11 @@ public class MailUtil {
         content = content.replace("[[code]]", verificationCode);
         mimeMessageHelper.setText(content, true);
         javaMailSender.send(mimeMessage);
+    }
+
+
+    public String generateVerificationCode() {
+        return String.valueOf(new Random().nextInt(899999) + 100000);
     }
 
 }

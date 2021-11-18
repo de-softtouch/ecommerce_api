@@ -1,5 +1,6 @@
 package com.api.ecommerceweb.service;
 
+import com.api.ecommerceweb.controller.member.ResetPasswordRequest;
 import com.api.ecommerceweb.helper.MemberHelper;
 import com.api.ecommerceweb.request.AccountUpdateRequest;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +25,13 @@ public class MemberService {
 
     public ResponseEntity<?> getFiles() {
         return memberHelper.getFiles();
+    }
+
+    public ResponseEntity<?> getVerificationCode() {
+        return memberHelper.getVerificationCode();
+    }
+
+    public ResponseEntity<?> resetPassword(ResetPasswordRequest resetPasswordRequest) {
+        return memberHelper.resetPassword(resetPasswordRequest);
     }
 }

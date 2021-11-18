@@ -1,5 +1,6 @@
 package com.api.ecommerceweb.helper;
 
+import com.api.ecommerceweb.enumm.AuthenticateProvider;
 import com.api.ecommerceweb.enumm.ERole;
 import com.api.ecommerceweb.model.Role;
 import com.api.ecommerceweb.model.User;
@@ -78,6 +79,7 @@ public class AuthHelper {
         user.setActive(0);
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setAuthProvider(AuthenticateProvider.LOCAL);
         Role role = roleRepo.getByName(ERole.ROLE_MEMBER);
         role.getUsers().add(user);
         user.setRoles(Set.of(role));

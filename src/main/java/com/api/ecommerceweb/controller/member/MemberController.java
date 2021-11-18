@@ -34,5 +34,13 @@ public class MemberController {
         return memberService.getFiles();
     }
 
+    @GetMapping("/verification")
+    public ResponseEntity<?> getVerificationCode() {
+        return memberService.getVerificationCode();
+    }
 
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest) {
+        return memberService.resetPassword(resetPasswordRequest);
+    }
 }
