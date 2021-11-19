@@ -13,6 +13,7 @@ public class UserMapper {
         UserDTO userDTO = new UserDTO();
         userDTO.setFullName(user.getFullName());
         userDTO.setUsername(user.getUsername());
+        userDTO.setEmail(user.getEmail());
         userDTO.setGender(user.getGender());
         userDTO.setPhone(user.getPhone());
         userDTO.setDob(user.getDob());
