@@ -43,8 +43,8 @@ public class Address {
     @Column(name = "is_default", columnDefinition = "tinyint(2) default 0")
     private Integer isDefault;
 
-    @Column(columnDefinition = "tinyint(2) default 1")
-    private Integer status;
+    @Column(name = "status", columnDefinition = "tinyint(2) default 1", nullable = false)
+    private int status = 1;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

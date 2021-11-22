@@ -2,6 +2,10 @@ package com.api.ecommerceweb.dto;
 
 import lombok.Data;
 
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 public class CategoryDTO {
 
@@ -9,6 +13,11 @@ public class CategoryDTO {
 
     private String name;
 
-    private CategoryDTO subCategory;
+    private Date createDate;
 
+    private Set<CategoryDTO> children = new HashSet<>();
+
+    private FileDTO img;
+
+    private Integer pos;
 }

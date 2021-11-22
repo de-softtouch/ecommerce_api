@@ -11,45 +11,34 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "feedbacks")
+@Table(name = "files")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class Feedback {
+public class File {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String comment;
+    private String name;
 
-    private Integer rating;
+    private String type;
 
-    private Integer qualityRating;
-
-    private Integer shipmentRating;
-
-    private Integer sellerRating;
+    private Long size;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(updatable = false)
-    private Date createDate;
+    private Date uploadDate;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date modifyDate;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    //
+    @OneToOne(mappedBy = "image")
+    private Category category;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
 
-    @ManyToOne
-    @JoinColumn(name = "order_item_id")
-    private OrderItem orderItem;
 }

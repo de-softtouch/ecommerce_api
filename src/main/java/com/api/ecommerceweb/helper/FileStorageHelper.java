@@ -28,7 +28,8 @@ public class FileStorageHelper {
                 .path("/api/v1/public/files/")
                 .path(savedFileName)
                 .toUriString();
-        return ResponseEntity.ok(new UploadFileResponse(savedFileName, fileDownloadUri, multipartFile.getContentType(), multipartFile.getSize()));
+        return ResponseEntity.ok(
+                new UploadFileResponse(savedFileName, fileDownloadUri, multipartFile.getContentType(), multipartFile.getSize()));
     }
 
     public ResponseEntity<?> downloadFile(String fileName, HttpServletRequest httpServletRequest) {

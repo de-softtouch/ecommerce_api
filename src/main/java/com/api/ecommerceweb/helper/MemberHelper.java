@@ -132,7 +132,8 @@ public class MemberHelper {
         List<Address> savedAddresses = addressRepo.findByUserAndStatus(getPrincipal().getUser(), 1);
 
         Address address;
-        if (addressRequest.getId() != null && addressRepo.existsById(addressRequest.getId())) {
+        if (addressRequest.getId() != null
+                && addressRepo.existsById(addressRequest.getId())) {
             address = addressRepo.getById(addressRequest.getId());
             if (savedAddresses.size() == 1)
                 address.setIsDefault(1);

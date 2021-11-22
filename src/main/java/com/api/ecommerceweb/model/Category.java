@@ -24,11 +24,19 @@ public class Category {
     @Column(nullable = false)
     private String name;
 
+    @OneToOne
+    private File image;
+
     @ManyToOne
-    @JoinColumn(name = "sub_category_id", columnDefinition = "int default 1")
-    private Category subCategory;
+    @JoinColumn(name = "parent_id", nullable = true)
+    private Category parent;
+
+    private Integer pos;
 
     //
+//    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+//    private Set<Category> children = new HashSet<>();
+
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<Product> products = new ArrayList<>();
 }
