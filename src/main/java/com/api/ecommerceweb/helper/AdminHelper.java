@@ -86,7 +86,6 @@ public class AdminHelper {
         return ResponseEntity.ok("Update category success");
     }
 
-
     public ResponseEntity<?> removeCategory(Long id) {
         Optional<Category> optionalCategory = categoryRepo.findById(id);
         if (optionalCategory.isEmpty())

@@ -8,7 +8,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "files")
@@ -39,6 +41,9 @@ public class File {
     //
     @OneToOne(mappedBy = "image")
     private Category category;
+
+    @OneToMany(mappedBy = "image", fetch = FetchType.LAZY)
+    private List<ProductImage> products = new ArrayList<>();
 
 
 }

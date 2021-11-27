@@ -12,6 +12,8 @@ public class VariationDTO {
 
     private Long id;
 
+    private String name;
+
     private Double price;
 
     private Integer qty;
@@ -19,5 +21,7 @@ public class VariationDTO {
     private Size size;
 
     private Color color;
+
+    private String description;
 
 }

@@ -26,7 +26,12 @@ public class Color {
 
     private String label;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Product product;
+
+
     //
     @OneToMany(mappedBy = "color", fetch = FetchType.LAZY)
     private List<Variation> variations = new ArrayList<>();
+
 }

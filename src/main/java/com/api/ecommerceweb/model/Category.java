@@ -25,10 +25,11 @@ public class Category {
     private String name;
 
     @OneToOne
+    @JoinColumn(name = "img_id")
     private File image;
 
     @ManyToOne
-    @JoinColumn(name = "parent_id", nullable = true)
+    @JoinColumn(name = "parent_id")
     private Category parent;
 
     private Integer pos;

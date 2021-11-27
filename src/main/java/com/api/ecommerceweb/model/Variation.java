@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * variation of product
@@ -37,8 +35,11 @@ public class Variation {
     private Color color;
 
     //
-    @ManyToMany(mappedBy = "variations", fetch = FetchType.LAZY)
-    private Set<Product> products = new HashSet<>();
+//    @ManyToMany(mappedBy = "variations", fetch = FetchType.LAZY)
+//    private Set<Product> products = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @OneToOne(mappedBy = "variation", fetch = FetchType.LAZY)
     private OrderItem orderItem;
