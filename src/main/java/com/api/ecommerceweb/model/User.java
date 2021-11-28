@@ -64,6 +64,9 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date modifyDate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Shop shop;
+
     //
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Address> addresses = new HashSet<>();

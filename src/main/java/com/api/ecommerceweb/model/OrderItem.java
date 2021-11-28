@@ -39,4 +39,5 @@ public class OrderItem {
     //
     @OneToMany(mappedBy = "orderItem",fetch = FetchType.LAZY)
     private List<Feedback> feedbacks = new ArrayList<>();
+
 }

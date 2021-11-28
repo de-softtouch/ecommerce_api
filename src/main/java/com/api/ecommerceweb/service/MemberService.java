@@ -47,4 +47,12 @@ public class MemberService {
     public ResponseEntity<?> deleteAddress(long id) {
         return memberHelper.deleteAddress(id);
     }
+
+    public ResponseEntity<?> getOrders() {
+        return memberHelper.getOrders();
+    }
+
+    public ResponseEntity<?> cancelOrder(Long id) {
+        return memberHelper.cancelOrder(id);
+    }
 }

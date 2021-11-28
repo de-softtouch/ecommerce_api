@@ -36,4 +36,12 @@ public class SellerService {
     public ResponseEntity<?> deleteProduct(Long id) {
         return sellerHelper.deleteProduct(id);
     }
+
+    public ResponseEntity<?> getOrders() {
+        return sellerHelper.getOrders();
+    }
+
+    public ResponseEntity<?> updateOrder(Long id, Integer status) {
+        return sellerHelper.updateOrder(id, status);
+    }
 }

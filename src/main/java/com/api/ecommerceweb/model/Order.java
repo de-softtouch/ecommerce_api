@@ -41,6 +41,9 @@ public class Order {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false)
     private Date orderDate;
+
+    @ManyToOne
+    private Shop shop;
     //
     @OneToMany(mappedBy = "order")
     @OrderBy("posIndex DESC ")

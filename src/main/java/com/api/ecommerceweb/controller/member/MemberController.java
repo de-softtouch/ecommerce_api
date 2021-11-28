@@ -59,4 +59,15 @@ public class MemberController {
     public ResponseEntity<?> resetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest) {
         return memberService.resetPassword(resetPasswordRequest);
     }
+
+    @GetMapping("/orders")
+    public ResponseEntity<?> getOrders() {
+        return memberService.getOrders();
+    }
+
+    @PostMapping("/orders/{id}")
+    public ResponseEntity<?> cancelOrder(@PathVariable("id") Long id) {
+        return memberService.cancelOrder(id);
+
+    }
 }

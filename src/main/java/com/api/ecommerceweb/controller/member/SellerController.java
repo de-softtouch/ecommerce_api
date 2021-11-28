@@ -46,5 +46,15 @@ public class SellerController {
         return sellerService.saveBrand(brandRequest);
     }
 
+    @GetMapping("/orders")
+    public ResponseEntity<?> getOrders() {
+        return sellerService.getOrders();
+    }
+
+    @PostMapping("/orders/{id}")
+    public ResponseEntity<?> updateOrder(@PathVariable("id") Long id, @RequestParam Integer status) {
+        return sellerService.updateOrder(id, status);
+    }
+
 
 }

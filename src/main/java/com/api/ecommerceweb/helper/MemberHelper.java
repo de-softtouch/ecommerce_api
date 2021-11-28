@@ -3,11 +3,15 @@ package com.api.ecommerceweb.helper;
 import com.api.ecommerceweb.controller.member.ResetPasswordRequest;
 import com.api.ecommerceweb.dto.AddressDTO;
 import com.api.ecommerceweb.dto.UserDTO;
+import com.api.ecommerceweb.enumm.OrderStatus;
 import com.api.ecommerceweb.mapper.AddressMapper;
 import com.api.ecommerceweb.mapper.UserMapper;
 import com.api.ecommerceweb.model.Address;
+import com.api.ecommerceweb.model.Order;
+import com.api.ecommerceweb.model.OrderItem;
 import com.api.ecommerceweb.model.User;
 import com.api.ecommerceweb.repository.AddressRepository;
+import com.api.ecommerceweb.repository.OrderRepository;
 import com.api.ecommerceweb.repository.UserRepository;
 import com.api.ecommerceweb.request.AccountUpdateRequest;
 import com.api.ecommerceweb.request.AddressRequest;
@@ -25,10 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.MessagingException;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -42,6 +43,7 @@ public class MemberHelper {
     private final MailUtil mailUtil;
     private final PasswordEncoder passwordEncoder;
     private final AddressRepository addressRepo;
+    private final OrderRepository orderRepo;
 
 
     public ResponseEntity<?> getCurrentUserDetails() {
@@ -169,5 +171,83 @@ public class MemberHelper {
             return ResponseEntity.ok("Delete address success");
         }
         return ResponseEntity.badRequest().body("Can not find address with id: " + id);
+    }
+
+    public ResponseEntity<?> getOrders() {
+        List<Order> orders = orderRepo.findAllByUser(getCurrentUser());
+        List<Object> rs = new ArrayList<>();
+        for (Order o : orders) {
+            Map<String, Object> orderResponse = toOrderDetailsResponse(o);
+            rs.add(orderResponse);
+        }
+        return ResponseEntity.ok(rs);
+    }
+
+    private User getCurrentUser() {
+        CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getUser();
+    }
+
+    private Map<String, Object> toOrderDetailsResponse(Order order) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", order.getId());
+        map.put("orderDate", order.getOrderDate());
+        map.put("status", order.getStatus());
+        //user
+        User orderUser = order.getUser();
+        Map<String, Object> u = new HashMap<>();
+        u.put("id", orderUser.getId());
+        u.put("username", orderUser.getFullName());
+        //address
+        Address address = order.getAddress();
+        Map<String, Object> a = new HashMap<>();
+        a.put("id", address.getId());
+        a.put("addressDetails", address.getAddressDetails());
+        a.put("type", address.getType());
+        a.put("postCode", address.getPostCode());
+        a.put("phone", address.getPhone());
+        u.put("address", a);
+        map.put("user", u);
+
+        //items
+        List<Object> orderItems = new ArrayList<>();
+        for (OrderItem item :
+                order.getOrderItems()) {
+            Map<String, Object> o = new HashMap<>();
+            o.put("qty", item.getQty());
+            o.put("message", item.getMessage());
+            o.put("productId", item.getProduct().getId());
+            o.put("name", item.getProduct().getName());
+            o.put("size", item.getVariation().getSize().getSize());
+            o.put("color", item.getVariation().getColor().getCode());
+            orderItems.add(o);
+        }
+        map.put("orderItems", orderItems);
+        return map;
+    }
+
+    public ResponseEntity<?> cancelOrder(Long id) {
+        Optional<Order> optionalOrder = orderRepo.findByIdAndUser(id, getCurrentUser());
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            if (!order.getStatus().equals(OrderStatus.TO_RECEIVE) && !order.getStatus().equals(OrderStatus.COMPLETED)) {
+                order.setStatus(OrderStatus.CANCELLED);
+                orderRepo.save(order);
+                //send email to seller user canceled
+                for (User owner :
+                        order.getShop().getOwners()) {
+                    try {
+                        mailUtil.sendCancelOrderInfo(owner.getEmail(), String.valueOf(order.getId()), order.getUser().getFullName(), new Date(), "...reason..");
+                    } catch (MessagingException | UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                        log.error("Can not send cancel order mail to shop owner - {}", e.getMessage());
+                    }
+                }
+                return ResponseEntity.ok("Canceled order #" + id);
+            } else {
+                return ResponseEntity.badRequest().body("Can not cancel because the order was shipping");
+            }
+        }
+        return ResponseEntity.notFound().build();
     }
 }

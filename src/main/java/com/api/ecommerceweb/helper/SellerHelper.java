@@ -1,12 +1,15 @@
 package com.api.ecommerceweb.helper;
 
 import com.api.ecommerceweb.dto.BrandDTO;
+import com.api.ecommerceweb.enumm.OrderStatus;
 import com.api.ecommerceweb.mapper.BrandMapper;
 import com.api.ecommerceweb.model.*;
 import com.api.ecommerceweb.repository.*;
 import com.api.ecommerceweb.request.*;
+import com.api.ecommerceweb.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -24,6 +27,7 @@ public class SellerHelper {
     private final VariationRepository variantRepo;
     private final ColorRepository colorRepo;
     private final SizeRepository sizeRepo;
+    private final OrderRepository orderRepo;
 
     public ResponseEntity<?> getProduct(Long id) {
         Optional<Product> optionalProduct = productRepo.findById(id);
@@ -199,8 +203,6 @@ public class SellerHelper {
                 variantRepo.save(variation);
             }
         }
-
-
         //save images
         int i = -1;
         for (Long imgId :
@@ -248,6 +250,78 @@ public class SellerHelper {
             product.setStatus(0);
             productRepo.save(product);
             return ResponseEntity.ok("Delete product success");
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    public ResponseEntity<?> getOrders() {
+        List<Order> orders = orderRepo.findAllByShop_Owners(getCurrentUser());
+        List<Object> rs = new ArrayList<>();
+        for (Order order :
+                orders) {
+            Map<String, Object> map = toOrderDetailsResponse(order);
+            rs.add(map);
+        }
+        return ResponseEntity.ok(rs);
+
+    }
+
+
+    private Map<String, Object> toOrderDetailsResponse(Order order) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", order.getId());
+        map.put("orderDate", order.getOrderDate());
+        map.put("status", order.getStatus());
+        //user
+        User orderUser = order.getUser();
+        Map<String, Object> u = new HashMap<>();
+        u.put("id", orderUser.getId());
+        u.put("username", orderUser.getFullName());
+        //address
+        Address address = order.getAddress();
+        Map<String, Object> a = new HashMap<>();
+        a.put("id", address.getId());
+        a.put("addressDetails", address.getAddressDetails());
+        a.put("type", address.getType());
+        a.put("postCode", address.getPostCode());
+        a.put("phone", address.getPhone());
+        u.put("address", a);
+        map.put("user", u);
+
+        //items
+        List<Object> orderItems = new ArrayList<>();
+        for (OrderItem item :
+                order.getOrderItems()) {
+            Map<String, Object> o = new HashMap<>();
+            o.put("qty", item.getQty());
+            o.put("message", item.getMessage());
+            o.put("productId", item.getProduct().getId());
+            o.put("name", item.getProduct().getName());
+            o.put("size", item.getVariation().getSize().getSize());
+            o.put("color", item.getVariation().getColor().getCode());
+            orderItems.add(o);
+        }
+        map.put("orderItems", orderItems);
+        return map;
+    }
+
+    private User getCurrentUser() {
+        return ((CustomUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getUser();
+    }
+
+    public ResponseEntity<?> updateOrder(Long id, Integer status) {
+        Optional<Order> optionalOrder = orderRepo.findByIdAndShop_Owners(id, getCurrentUser());
+        if (optionalOrder.isPresent()) {
+            Optional<OrderStatus> orderStatus = OrderStatus.fromCode(status);
+            if (orderStatus.isPresent()) {
+                Order order = optionalOrder.get();
+                order.setStatus(orderStatus.get());
+                orderRepo.save(order);
+
+                return ResponseEntity.ok("Update order success");
+            }
+
+            return ResponseEntity.badRequest().body("Order status not valid");
         }
         return ResponseEntity.notFound().build();
     }

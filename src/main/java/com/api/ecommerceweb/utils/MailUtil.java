@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.Random;
 
 @Component("MailUtil")
@@ -38,6 +39,31 @@ public class MailUtil {
 
     public String generateVerificationCode() {
         return String.valueOf(new Random().nextInt(899999) + 100000);
+    }
+
+
+    public void sendCancelOrderInfo(String to, String orderId, String orderUserName, Date cancelDate, String reason) throws MessagingException, UnsupportedEncodingException {
+        String content =
+                "Cancel Order:<br>"
+                        + "<h2 style=\"color: blueviolet; font-weight: bolder\">" +
+                        "The order [[orderId]] have just canceled by [[orderUserName]] at [[cancelDate]]" + "<br>" +
+                        "Reason: " + "[[reason]]" +
+                        "</h2>"
+                        + "Thank you,<br>"
+                        + "Have a good experience in Sheppo Ecommerce.";
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
+        mimeMessageHelper.setFrom(FROM_ADDRESS, to);
+        mimeMessageHelper.setTo(to);
+        mimeMessageHelper.setSubject("Canceled order #" + orderId);
+        content = content.replace("[[orderId]]", orderId);
+        content = content.replace("[[orderUserName]]", orderUserName);
+        content = content.replace("[[cancelDate]]", cancelDate.toString());
+        content = content.replace("[[reason]]", reason);
+        mimeMessageHelper.setText(content, true);
+        javaMailSender.send(mimeMessage);
+
+
     }
 
 }
