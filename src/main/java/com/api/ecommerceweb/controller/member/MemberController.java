@@ -2,6 +2,8 @@ package com.api.ecommerceweb.controller.member;
 
 import com.api.ecommerceweb.request.AccountUpdateRequest;
 import com.api.ecommerceweb.request.AddressRequest;
+import com.api.ecommerceweb.request.FeedbackRequest;
+import com.api.ecommerceweb.request.OrderRequest;
 import com.api.ecommerceweb.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -65,9 +67,24 @@ public class MemberController {
         return memberService.getOrders();
     }
 
+    @PostMapping("/orders")
+    public ResponseEntity<?> orders(@RequestBody @Valid OrderRequest request) {
+        return memberService.orders(request);
+    }
+
     @PostMapping("/orders/{id}")
     public ResponseEntity<?> cancelOrder(@PathVariable("id") Long id) {
         return memberService.cancelOrder(id);
-
     }
+
+    @GetMapping("/feedbacks")
+    public ResponseEntity<?> getFeedBacks() {
+        return memberService.getFeedBacks();
+    }
+
+    @PostMapping("/feedbacks")
+    public ResponseEntity<?> postFeedback(@RequestBody @Valid FeedbackRequest feedbackRequest) {
+        return memberService.postFeedback(feedbackRequest);
+    }
+
 }

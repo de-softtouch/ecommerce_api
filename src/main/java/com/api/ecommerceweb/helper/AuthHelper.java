@@ -39,17 +39,20 @@ public class AuthHelper {
 
 
     public ResponseEntity<?> login(AuthRequest authRequest) {
-
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authRequest.getEmail(), authRequest.getPassword()
         ));
-//        authenticate.setAuthenticated(true);
         CustomUserDetails customUserDetails = (CustomUserDetails) authenticate.getPrincipal();
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("access_token", jwtTokenUtil.generateAccessToken(customUserDetails.getUser()));
-        tokens.put("refresh_token", jwtTokenUtil.generateRefreshToken(customUserDetails.getUser()));
-        return ResponseEntity.ok(tokens);
-
+        User user = customUserDetails.getUser();
+        Map<String, Object> userInfoResp = new HashMap<>();
+        userInfoResp.put("id", user.getId());
+        userInfoResp.put("fullName", user.getFullName());
+        userInfoResp.put("email", user.getEmail());
+        userInfoResp.put("phone", user.getPhone());
+        userInfoResp.put("avt", user.getProfileImg());
+        userInfoResp.put("access_token", jwtTokenUtil.generateAccessToken(user));
+        userInfoResp.put("refresh_token", jwtTokenUtil.generateRefreshToken(user));
+        return ResponseEntity.ok(userInfoResp);
     }
 
     public ResponseEntity<?> refreshToken(String str) {

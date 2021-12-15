@@ -1,13 +1,14 @@
 package com.api.ecommerceweb.repository;
 
-import com.api.ecommerceweb.model.File;
+import com.api.ecommerceweb.model.Shop;
+import com.api.ecommerceweb.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface FileRepository extends JpaRepository<File, Long> {
+public interface ShopRepository extends JpaRepository<Shop,Long> {
 
-    Optional<File> findByName(String name);
+    Optional<Shop> findByOwners(User user);
 }

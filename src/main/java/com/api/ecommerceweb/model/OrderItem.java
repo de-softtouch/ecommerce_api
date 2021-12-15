@@ -1,12 +1,15 @@
 package com.api.ecommerceweb.model;
 
+import com.api.ecommerceweb.enumm.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -24,20 +27,32 @@ public class OrderItem {
     @Column(name = "qty", columnDefinition = "int default 1")
     private Integer qty;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "variation_id")
     private Variation variation;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
     private Product product;
 
     private String message;
 
+    @Enumerated(EnumType.ORDINAL)
+    private OrderStatus status;
+
+    @ManyToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
+
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createDate;
     //
-    @OneToMany(mappedBy = "orderItem",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "orderItem", fetch = FetchType.LAZY)
     private List<Feedback> feedbacks = new ArrayList<>();
 
 }

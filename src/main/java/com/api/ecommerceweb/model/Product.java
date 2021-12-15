@@ -24,6 +24,14 @@ public class Product {
 
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "cover_img_id")
+    private File coverImage;
+
+    @ManyToOne
+    @JoinColumn(name = "cover_vid_id")
+    private File coverVideo;
+
     @OneToMany(mappedBy = "product")
     @OrderBy(value = "pos ASC ")
     private List<ProductImage> images = new ArrayList<>();
@@ -33,7 +41,6 @@ public class Product {
     private Brand brand;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-//    @JoinTable(name = "PRODUCT_VARIATIONS", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "variation_id"))
     private Set<Variation> variations = new HashSet<>();
 
     private Double standardPrice;
@@ -48,10 +55,10 @@ public class Product {
     @JoinTable(name = "users_like_products", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "product_id"))
     private Set<User> usersLike = new HashSet<>();
 
-    @Column(columnDefinition = "tinyint(2) default 1")
+    @Column(columnDefinition = "tinyint(10) default 1")
     private Integer active;
 
-    @Column(columnDefinition = "tinyint(2) default 0")
+    @Column(columnDefinition = "tinyint(10) default 1")
     private Integer status;
 
     @CreationTimestamp
@@ -65,6 +72,9 @@ public class Product {
 
     private String description;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shop_id")
+    private Shop shop;
     //
     @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
     private OrderItem orderItem;

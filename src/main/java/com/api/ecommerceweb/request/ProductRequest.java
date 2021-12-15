@@ -1,13 +1,11 @@
 package com.api.ecommerceweb.request;
 
+import com.api.ecommerceweb.model.File;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Data
 public class ProductRequest {
@@ -18,9 +16,14 @@ public class ProductRequest {
     @Size(min = 10, max = 100)
     private String name;
 
-    private Long primaryImgId;
+    @NotBlank
+    private String coverImage;
 
-    private Set<Long> images = new TreeSet<>();
+    private String coverVideo;
+
+    private Set<File> files = new HashSet<>();
+
+    private Set<String> images = new TreeSet<>();
 
     private BrandRequest brand;
 
@@ -35,5 +38,9 @@ public class ProductRequest {
     private Integer status = 0;
 
     private Integer active = 1;
+
+    private String description;
+
+    private String shortDescription;
 
 }

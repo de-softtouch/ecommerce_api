@@ -51,9 +51,19 @@ public class SellerController {
         return sellerService.getOrders();
     }
 
+    @GetMapping("/orders/{id}")
+    public ResponseEntity<?> getOrder(@PathVariable("id") Long id){
+        return sellerService.getOrder(id);
+
+    }
     @PostMapping("/orders/{id}")
     public ResponseEntity<?> updateOrder(@PathVariable("id") Long id, @RequestParam Integer status) {
         return sellerService.updateOrder(id, status);
+    }
+
+    @GetMapping("/feedbacks")
+    public ResponseEntity<?> getFeedbacks() {
+        return sellerService.getFeedbacks();
     }
 
 

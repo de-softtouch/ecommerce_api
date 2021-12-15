@@ -45,5 +45,10 @@ public class File {
     @OneToMany(mappedBy = "image", fetch = FetchType.LAZY)
     private List<ProductImage> products = new ArrayList<>();
 
+    @OneToMany(mappedBy = "coverImage", fetch = FetchType.LAZY)
+    private List<Product> productImageCovers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "coverVideo", fetch = FetchType.LAZY)
+    private List<Product> productVideoCovers = new ArrayList<>();
 
 }

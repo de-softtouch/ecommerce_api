@@ -38,10 +38,19 @@ public class SellerService {
     }
 
     public ResponseEntity<?> getOrders() {
-        return sellerHelper.getOrders();
+//        return sellerHelper.getOrders();
+        return sellerHelper.getOrders2();
     }
 
     public ResponseEntity<?> updateOrder(Long id, Integer status) {
         return sellerHelper.updateOrder(id, status);
+    }
+
+    public ResponseEntity<?> getFeedbacks() {
+        return sellerHelper.getFeedbacks();
+    }
+
+    public ResponseEntity<?> getOrder(Long id) {
+        return sellerHelper.getOrder(id);
     }
 }

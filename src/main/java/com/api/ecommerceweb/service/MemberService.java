@@ -4,6 +4,8 @@ import com.api.ecommerceweb.controller.member.ResetPasswordRequest;
 import com.api.ecommerceweb.helper.MemberHelper;
 import com.api.ecommerceweb.request.AccountUpdateRequest;
 import com.api.ecommerceweb.request.AddressRequest;
+import com.api.ecommerceweb.request.FeedbackRequest;
+import com.api.ecommerceweb.request.OrderRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -54,5 +56,17 @@ public class MemberService {
 
     public ResponseEntity<?> cancelOrder(Long id) {
         return memberHelper.cancelOrder(id);
+    }
+
+    public ResponseEntity<?> getFeedBacks() {
+        return memberHelper.getFeedBack();
+    }
+
+    public ResponseEntity<?> postFeedback(FeedbackRequest feedbackRequest) {
+        return memberHelper.postFeedback(feedbackRequest);
+    }
+
+    public ResponseEntity<?> orders(OrderRequest request) {
+        return memberHelper.orders(request);
     }
 }

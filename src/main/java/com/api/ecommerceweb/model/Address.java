@@ -59,6 +59,9 @@ public class Address {
     @Temporal(TemporalType.TIMESTAMP)
     private Date modifyDate;
     //
-    @OneToMany(mappedBy = "address")
+    @OneToMany(mappedBy = "address",fetch = FetchType.LAZY)
     private List<Order> orders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "address",fetch = FetchType.LAZY)
+    private List<OrderItem> orderItems = new ArrayList<>();
 }

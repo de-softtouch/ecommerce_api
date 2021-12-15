@@ -1,6 +1,8 @@
 package com.api.ecommerceweb.helper;
 
+import com.api.ecommerceweb.model.File;
 import com.api.ecommerceweb.reponse.UploadFileResponse;
+import com.api.ecommerceweb.repository.FileRepository;
 import com.api.ecommerceweb.utils.FileStorageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,7 @@ import java.io.IOException;
 public class FileStorageHelper {
 
     private final FileStorageUtil fileStorageUtil;
+    private final FileRepository fileRepository;
 
     public ResponseEntity<?> uploadFile(MultipartFile multipartFile) {
         String savedFileName = fileStorageUtil.storeFile(multipartFile, "HHI");
@@ -28,6 +31,13 @@ public class FileStorageHelper {
                 .path("/api/v1/public/files/")
                 .path(savedFileName)
                 .toUriString();
+
+        File file = new File();
+        file.setName(savedFileName);
+        file.setType(multipartFile.getContentType());
+        file.setSize(multipartFile.getSize());
+        fileRepository.save(file);
+
         return ResponseEntity.ok(
                 new UploadFileResponse(savedFileName, fileDownloadUri, multipartFile.getContentType(), multipartFile.getSize()));
     }

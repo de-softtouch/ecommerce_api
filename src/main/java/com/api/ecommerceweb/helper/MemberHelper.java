@@ -6,15 +6,9 @@ import com.api.ecommerceweb.dto.UserDTO;
 import com.api.ecommerceweb.enumm.OrderStatus;
 import com.api.ecommerceweb.mapper.AddressMapper;
 import com.api.ecommerceweb.mapper.UserMapper;
-import com.api.ecommerceweb.model.Address;
-import com.api.ecommerceweb.model.Order;
-import com.api.ecommerceweb.model.OrderItem;
-import com.api.ecommerceweb.model.User;
-import com.api.ecommerceweb.repository.AddressRepository;
-import com.api.ecommerceweb.repository.OrderRepository;
-import com.api.ecommerceweb.repository.UserRepository;
-import com.api.ecommerceweb.request.AccountUpdateRequest;
-import com.api.ecommerceweb.request.AddressRequest;
+import com.api.ecommerceweb.model.*;
+import com.api.ecommerceweb.repository.*;
+import com.api.ecommerceweb.request.*;
 import com.api.ecommerceweb.security.CustomUserDetails;
 import com.api.ecommerceweb.utils.FileStorageUtil;
 import com.api.ecommerceweb.utils.MailUtil;
@@ -44,6 +38,11 @@ public class MemberHelper {
     private final PasswordEncoder passwordEncoder;
     private final AddressRepository addressRepo;
     private final OrderRepository orderRepo;
+    private final FeedbackRepository feedbackRepo;
+    private final ProductRepository productRepo;
+    private final ShopRepository shopRepo;
+    private final VariationRepository variantRepo;
+    private final OrderItemRepository orderItemRepo;
 
 
     public ResponseEntity<?> getCurrentUserDetails() {
@@ -227,27 +226,112 @@ public class MemberHelper {
     }
 
     public ResponseEntity<?> cancelOrder(Long id) {
-        Optional<Order> optionalOrder = orderRepo.findByIdAndUser(id, getCurrentUser());
-        if (optionalOrder.isPresent()) {
-            Order order = optionalOrder.get();
-            if (!order.getStatus().equals(OrderStatus.TO_RECEIVE) && !order.getStatus().equals(OrderStatus.COMPLETED)) {
-                order.setStatus(OrderStatus.CANCELLED);
-                orderRepo.save(order);
-                //send email to seller user canceled
-                for (User owner :
-                        order.getShop().getOwners()) {
-                    try {
-                        mailUtil.sendCancelOrderInfo(owner.getEmail(), String.valueOf(order.getId()), order.getUser().getFullName(), new Date(), "...reason..");
-                    } catch (MessagingException | UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                        log.error("Can not send cancel order mail to shop owner - {}", e.getMessage());
-                    }
-                }
-                return ResponseEntity.ok("Canceled order #" + id);
-            } else {
-                return ResponseEntity.badRequest().body("Can not cancel because the order was shipping");
-            }
+//        Optional<Order> optionalOrder = orderRepo.findByIdAndUser(id, getCurrentUser());
+//        if (optionalOrder.isPresent()) {
+//            Order order = optionalOrder.get();
+//            if (!order.getStatus().equals(OrderStatus.TO_RECEIVE) && !order.getStatus().equals(OrderStatus.COMPLETED)) {
+//                order.setStatus(OrderStatus.CANCELLED);
+//                orderRepo.save(order);
+//                //send email to seller user canceled
+//                List<Shop> shops = order.getShops();
+//                for (Shop sh :
+//                        shops) {
+//                    for (User owner :
+//                            sh.getOwners()) {
+//                        try {
+//                            mailUtil.sendCancelOrderInfo(owner.getEmail(), String.valueOf(order.getId()), order.getUser().getFullName(), new Date(), "...reason..");
+//                        } catch (MessagingException | UnsupportedEncodingException e) {
+//                            e.printStackTrace();
+//                            log.error("Can not send cancel order mail to shop owner - {}", e.getMessage());
+//                        }
+//                    }
+//                }
+//                return ResponseEntity.ok("Canceled order #" + id);
+//            } else {
+//                return ResponseEntity.badRequest().body("Can not cancel because the order was shipping");
+//            }
+//        }
+//        return ResponseEntity.notFound().build();
+        return null;
+    }
+
+    public ResponseEntity<?> getFeedBack() {
+        List<Feedback> feedbacks = feedbackRepo.findAllByUser(getCurrentUser());
+        List<Object> rs = new ArrayList<>();
+        for (Feedback feedback :
+                feedbacks) {
+            Map<String, Object> feedbackResponse = new HashMap<>();
+            feedbackResponse.put("id", feedback.getId());
+            feedbackResponse.put("comment", feedback.getComment());
+            feedbackResponse.put("rating", feedback.getRating());
+            feedbackResponse.put("createDate", feedback.getCreateDate());
+            rs.add(feedbackResponse);
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(rs);
+    }
+
+    public ResponseEntity<?> postFeedback(FeedbackRequest request) {
+        //make sure user already have bought product
+        Optional<Order> optionalOrder = orderRepo.findByIdAndUser(request.getProductId(), getCurrentUser());
+        if (optionalOrder.isEmpty()) {
+            return ResponseEntity.badRequest().body("User have not bought product yet");
+        }
+        Optional<Product> optionalProduct = productRepo.findById(request.getProductId());
+        if (optionalProduct.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Feedback feedback;
+        if (request.getId() != null && feedbackRepo.existsById(request.getId())) {
+            feedback = feedbackRepo.getById(request.getId());
+        } else {
+            feedback = new Feedback();
+            feedback.setProduct(optionalProduct.get());
+        }
+        feedback.setComment(request.getComment());
+        feedback.setRating(request.getRating());
+        feedbackRepo.save(feedback);
+        return ResponseEntity.ok("Save feedback success");
+    }
+
+
+    public ResponseEntity<?> orders(OrderRequest request) {
+        Order order = new Order();
+        //order user
+        order.setUser(getCurrentUser());
+        //shop
+        Optional<Shop> optionalShop = shopRepo.findById(request.getShopId());
+        if (optionalShop.isEmpty())
+            return ResponseEntity.badRequest().body("shop is not exist");
+//        order.setShop(optionalShop.get());
+        order = orderRepo.save(order);
+        //order items
+        for (OrderItemRequest itemRequest :
+                request.getItems()) {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setMessage(itemRequest.getMessage());
+            orderItem.setQty(itemRequest.getQty());
+            //set shop
+
+            //set address
+            Optional<Address> optionalAddress = addressRepo.findById(itemRequest.getAddressId());
+            if (optionalAddress.isEmpty())
+                return ResponseEntity.badRequest().body("address is not exist");
+            orderItem.setAddress(optionalAddress.get());
+            //set product
+            Optional<Product> optionalProduct = productRepo.findById(itemRequest.getProductId());
+            if (optionalProduct.isEmpty())
+                return ResponseEntity.badRequest().body("address is not exist");
+            orderItem.setProduct(optionalProduct.get());
+            //variant
+            Optional<Variation> optionalVariation = variantRepo.findById(itemRequest.getVariantId());
+            if (optionalVariation.isEmpty())
+                return ResponseEntity.badRequest().body("variation is not exist");
+            orderItem.setVariation(optionalVariation.get());
+            order.getOrderItems().add(orderItem);
+            orderItem.setOrder(order);
+            orderItemRepo.save(orderItem);
+            //
+        }
+        return ResponseEntity.ok("order success");
     }
 }

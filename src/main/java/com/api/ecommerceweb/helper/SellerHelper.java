@@ -1,13 +1,13 @@
 package com.api.ecommerceweb.helper;
 
 import com.api.ecommerceweb.dto.BrandDTO;
-import com.api.ecommerceweb.enumm.OrderStatus;
 import com.api.ecommerceweb.mapper.BrandMapper;
 import com.api.ecommerceweb.model.*;
 import com.api.ecommerceweb.repository.*;
 import com.api.ecommerceweb.request.*;
 import com.api.ecommerceweb.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Component("SellerHelper")
 @RequiredArgsConstructor
+@Slf4j
 public class SellerHelper {
 
     private final ProductRepository productRepo;
@@ -28,6 +29,9 @@ public class SellerHelper {
     private final ColorRepository colorRepo;
     private final SizeRepository sizeRepo;
     private final OrderRepository orderRepo;
+    private final ShopRepository shopRepo;
+    private final FeedbackRepository feedbackRepo;
+    private final OrderItemRepository orderItemRepo;
 
     public ResponseEntity<?> getProduct(Long id) {
         Optional<Product> optionalProduct = productRepo.findById(id);
@@ -127,6 +131,20 @@ public class SellerHelper {
         product.setName(productRequest.getName());
         product.setStandardPrice(productRequest.getStandardPrice());
         product.setSalesPrice(productRequest.getSalesPrice());
+        product.setDescription(productRequest.getDescription());
+        //images and video
+        Optional<File> optionalCoverImage = fileRepo.findByName(productRequest.getCoverImage());
+        if (optionalCoverImage.isPresent()) {
+            product.setCoverImage(optionalCoverImage.get());
+        }
+        if (productRequest.getCoverVideo() != null) {
+            Optional<File> optionalCoverVid = fileRepo.findByName(productRequest.getCoverVideo());
+            if (optionalCoverVid.isPresent()) {
+                product.setCoverVideo(optionalCoverVid.get());
+            }
+        }
+
+
         //save brand
         //create brand request not exist
         BrandRequest brandRequest = productRequest.getBrand();
@@ -205,23 +223,28 @@ public class SellerHelper {
         }
         //save images
         int i = -1;
-        for (Long imgId :
+        for (String imageName :
                 productRequest.getImages()) {
-            i += 1;
-            ProductImgId productImgId = new ProductImgId(product.getId(), imgId);
-            //if image exist and product not has images
-            if (fileRepo.existsById(imgId)
-                    && !productImageRepo.existsById(productImgId)) {
-                ProductImage productImage = new ProductImage();
-                productImage.setId(productImgId);
-                productImage.setProduct(product);
-                productImage.setImage(fileRepo.getById(imgId));
-                productImage.setPos(i);
-                //add image
-                product.addImage(productImage);
-                productImageRepo.save(productImage);
+            Optional<File> optionalFile = fileRepo.findByName(imageName);
+            if (optionalFile.isPresent()) {
+                File image = optionalFile.get();
+                Long imgId = image.getId();
+                i += 1;
+                ProductImgId productImgId = new ProductImgId(product.getId(), imgId);
+                //if image exist and product not has images
+                if (!productImageRepo.existsById(productImgId)) {
+                    ProductImage productImage = new ProductImage();
+                    productImage.setId(productImgId);
+                    productImage.setProduct(product);
+                    productImage.setImage(fileRepo.getById(imgId));
+                    productImage.setPos(i);
+                    //add image
+                    product.addImage(productImage);
+                    productImageRepo.save(productImage);
 
+                }
             }
+
         }
         return ResponseEntity.ok(productRequest);
     }
@@ -255,15 +278,37 @@ public class SellerHelper {
     }
 
     public ResponseEntity<?> getOrders() {
-        List<Order> orders = orderRepo.findAllByShop_Owners(getCurrentUser());
         List<Object> rs = new ArrayList<>();
+        List<Order> orders = orderRepo.findDistinctByOrderItemsProductShop(getCurrentUser().getShop());
         for (Order order :
                 orders) {
-            Map<String, Object> map = toOrderDetailsResponse(order);
-            rs.add(map);
+            Map<String, Object> o = toOrderDetailsResponse(order);
+            rs.add(o);
         }
         return ResponseEntity.ok(rs);
+    }
 
+    public ResponseEntity<?> getOrders2() {
+        List<OrderItem> orderItems = orderItemRepo.findAllByProduct_Shop(getCurrentUser().getShop());
+        List<Object> rs = new ArrayList<>();
+        for (OrderItem orderItem :
+                orderItems) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("id", orderItem.getId());
+            item.put("productId", orderItem.getProduct().getId());
+            item.put("name", orderItem.getProduct().getName());
+            item.put("qty", orderItem.getQty());
+            item.put("message", orderItem.getMessage());
+            item.put("createDate", orderItem.getCreateDate());
+            //variant
+            HashMap<String, Object> variant = new HashMap<>();
+            variant.put("id", orderItem.getVariation().getId());
+            variant.put("size", orderItem.getVariation().getSize().getSize());
+            variant.put("color", orderItem.getVariation().getColor().getLabel());
+            item.put("variant", variant);
+            rs.add(item);
+        }
+        return ResponseEntity.ok(rs);
     }
 
 
@@ -310,19 +355,68 @@ public class SellerHelper {
     }
 
     public ResponseEntity<?> updateOrder(Long id, Integer status) {
-        Optional<Order> optionalOrder = orderRepo.findByIdAndShop_Owners(id, getCurrentUser());
-        if (optionalOrder.isPresent()) {
-            Optional<OrderStatus> orderStatus = OrderStatus.fromCode(status);
-            if (orderStatus.isPresent()) {
-                Order order = optionalOrder.get();
-                order.setStatus(orderStatus.get());
-                orderRepo.save(order);
+//        Optional<Order> optionalOrder = orderRepo.findByIdAndShops(id, getCurrentUser().getShop());
+//        if (optionalOrder.isPresent()) {
+//            Optional<OrderStatus> orderStatus = OrderStatus.fromCode(status);
+//            if (orderStatus.isPresent()) {
+//                Order order = optionalOrder.get();
+//                order.setStatus(orderStatus.get());
+//                orderRepo.save(order);
+//
+//                return ResponseEntity.ok("Update order success");
+//            }
+//
+//            return ResponseEntity.badRequest().body("Order status not valid");
+//        }
+//        return ResponseEntity.notFound().build();
+        return null;
+    }
 
-                return ResponseEntity.ok("Update order success");
-            }
-
-            return ResponseEntity.badRequest().body("Order status not valid");
+    public ResponseEntity<?> getFeedbacks() {
+        List<Feedback> feedbacks = feedbackRepo.findAllByProductShopOrderByCreateDate(getCurrentUser().getShop());
+        List<Object> rs = new ArrayList<>();
+        for (Feedback f :
+                feedbacks) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", f.getId());
+            map.put("rating", f.getRating());
+            map.put("comment", f.getComment());
+            map.put("createDate", f.getCreateDate());
+            map.put("user", Map.of(
+                    "id", f.getUser().getId(),
+                    "fullName", f.getUser().getFullName(),
+                    "avt", f.getUser().getProfileImg()));
+            map.put("product", Map.of(
+                    "id", f.getProduct().getId(),
+                    "name", f.getProduct().getName(),
+                    "img", f.getProduct().getImages().get(0).getImage().getName()));
+            rs.add(map);
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(rs);
+    }
+
+    public ResponseEntity<?> getOrder(Long id) {
+        Optional<OrderItem> optionalOrderItem = orderItemRepo.findById(id);
+        if (optionalOrderItem.isEmpty())
+            return ResponseEntity.notFound().build();
+        OrderItem orderItem = optionalOrderItem.get();
+        Map<String, Object> rs = new HashMap<>();
+        rs.put("id", orderItem.getId());
+        rs.put("message", orderItem.getMessage());
+        rs.put("createDate", orderItem.getCreateDate());
+        rs.put("qty", orderItem.getQty());
+        //variant
+        HashMap<Object, Object> variant = new HashMap<>();
+        variant.put("color", orderItem.getVariation().getColor().getLabel());
+        variant.put("size", orderItem.getVariation().getSize().getSize());
+        rs.put("variant", variant);
+        //product
+        HashMap<Object, Object> product = new HashMap<>();
+        product.put("id", orderItem.getProduct().getId());
+        product.put("name", orderItem.getProduct().getName());
+        rs.put("product", product);
+        return ResponseEntity.ok(rs);
+
+
     }
 }

@@ -42,8 +42,13 @@ public class Order {
     @Column(updatable = false)
     private Date orderDate;
 
-    @ManyToOne
-    private Shop shop;
+//    @ManyToOne
+//    private Shop shop;
+
+//    @ManyToMany
+//    @JoinTable(name = "order_shops",joinColumns = @JoinColumn(name = "order_id"),inverseJoinColumns = @JoinColumn(name = "shop_id"))
+//    private List<Shop> shops = new ArrayList<>();
+
     //
     @OneToMany(mappedBy = "order")
     @OrderBy("posIndex DESC ")
