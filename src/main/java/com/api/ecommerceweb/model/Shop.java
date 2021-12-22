@@ -28,13 +28,16 @@ public class Shop {
     private String banner;
 
     private String description;
+    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
+    private Set<User> owners = new HashSet<>();
     //
+    @OneToOne
+    private Address address;
 
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
     private List<Product> products = new ArrayList<>();
 
-    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
-    private Set<User> owners = new HashSet<>();
+
 
 
 }

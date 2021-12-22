@@ -64,4 +64,7 @@ public class Address {
 
     @OneToMany(mappedBy = "address",fetch = FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
+
+    @OneToOne(mappedBy = "address")
+    private Shop shop;
 }

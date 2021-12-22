@@ -1,6 +1,6 @@
 package com.api.ecommerceweb.controller.publicc;
 
-import com.api.ecommerceweb.service.PublicService;
+import com.api.ecommerceweb.helper.PublicHelper;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,17 +16,22 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PublicController {
 
-    private final PublicService publicService;
+    private final PublicHelper publicHelper;
 
     @GetMapping("/products/newest")
     public ResponseEntity<?> getNewestProducts() {
-        return publicService.getNewestProducts();
+        return publicHelper.getNewestProducts();
     }
 
 
     @GetMapping("/products")
     public ResponseEntity<?> getProducts(@RequestParam Map<String, String> params) {
-        return publicService.getProducts(params);
+        return publicHelper.getProducts(params);
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<?> getCategories(){
+        return publicHelper.getCategories();
     }
 
 

@@ -1,6 +1,6 @@
 package com.api.ecommerceweb.controller.publicc;
 
-import com.api.ecommerceweb.service.FileStorageService;
+import com.api.ecommerceweb.helper.FileStorageHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,15 +13,15 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 public class PublicFileController {
 
-    private final FileStorageService fileStorageService;
+    private final FileStorageHelper fileStorageHelper;
 
     @PostMapping
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile multipartFile) {
-        return fileStorageService.uploadFile(multipartFile);
+        return fileStorageHelper.uploadFile(multipartFile);
     }
 
     @GetMapping("/{fileName}")
     public ResponseEntity<?> downLoadFile(@PathVariable("fileName") String fileName, HttpServletRequest httpServletRequest) {
-        return fileStorageService.downLoadFile(fileName, httpServletRequest);
+        return fileStorageHelper.downLoadFile(fileName, httpServletRequest);
     }
 }

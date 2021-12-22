@@ -15,5 +15,9 @@ public class RegisterRequest {
     @NotBlank
     private String password;
 
+    private int gender =2;
+
+    private String fullName;
+
 
 }

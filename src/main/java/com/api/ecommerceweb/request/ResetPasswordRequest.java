@@ -1,4 +1,4 @@
-package com.api.ecommerceweb.controller.member;
+package com.api.ecommerceweb.request;
 
 import lombok.Data;
 
