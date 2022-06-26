@@ -6,7 +6,7 @@ import com.api.ecommerceweb.reponse.CategoryResponse;
 import com.api.ecommerceweb.repository.CategoryRepository;
 import com.api.ecommerceweb.repository.OrderItemRepository;
 import com.api.ecommerceweb.repository.ProductRepository;
-import com.api.ecommerceweb.utils.ValidatorUtil;
+import com.api.ecommerceweb.utils.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -43,8 +43,8 @@ public class PublicService {
             if (product.getCoverImage() != null) {
                 map.put("coverImage", product.getCoverImage().getName());
             }
-            map.put("standardPrice", product.getStandardPrice());
-            map.put("salesPrice", product.getSalesPrice());
+            map.put("standardPrice", product.getMinPrice());
+            map.put("salesPrice", product.getMaxPrice());
             rs.add(map);
         }
         return ResponseEntity.ok(rs);
@@ -52,47 +52,47 @@ public class PublicService {
 
     public ResponseEntity<?> getProducts(Map<String, String> params) {
         String name = null;
-        if (!ValidatorUtil.isBlankOrNull(params.get("name")))
-            name = params.get("name");
+        if (!ValidationUtil.isNullOrBlank(params.get("name")))
+            name ="%"+ params.get("name")+"%";
 
         String category = null;
-        if (!ValidatorUtil.isBlankOrNull(params.get("category")))
-            category = params.get("category");
+        if (!ValidationUtil.isNullOrBlank(params.get("category")))
+            category ="%"+ params.get("category")+"%";
 
         String brand = null;
-        if (!ValidatorUtil.isBlankOrNull(params.get("brand")))
-            brand = params.get("brand");
+        if (!ValidationUtil.isNullOrBlank(params.get("brand")))
+            brand = "%"+params.get("brand")+"%";
 
         Integer page;
-        if (ValidatorUtil.isNumeric(params.get("page"))) {
+        if (ValidationUtil.isNumeric(params.get("page"))) {
             page = Integer.parseInt(params.get("page"));
         } else {
             page = 0;
         }
         Integer pageSize;
-        if (ValidatorUtil.isNumeric(params.get("pageSize"))) {
+        if (ValidationUtil.isNumeric(params.get("pageSize"))) {
             pageSize = Integer.parseInt(params.get("pageSize"));
         } else {
             pageSize = 100;
         }
 
         Double minPrice = null;
-        if (ValidatorUtil.isNumeric(params.get("minPrice"))) {
+        if (ValidationUtil.isNumeric(params.get("minPrice"))) {
             minPrice = Double.parseDouble(params.get("minPrice"));
         }
         Double maxPrice = null;
-        if (ValidatorUtil.isNumeric(params.get("maxPrice"))) {
+        if (ValidationUtil.isNumeric(params.get("maxPrice"))) {
             maxPrice = Double.parseDouble(params.get("maxPrice"));
         }
         String sortBy;
-        if (!ValidatorUtil.isBlankOrNull(params.get("sortBy"))) {
+        if (!ValidationUtil.isNullOrBlank(params.get("sortBy"))) {
             sortBy = params.get("sortBy");
         } else {
             sortBy = "create_date";
         }
 
         String direction;
-        if (!ValidatorUtil.isBlankOrNull(params.get("direction"))) {
+        if (!ValidationUtil.isNullOrBlank(params.get("direction"))) {
             direction = params.get("direction");
         } else {
             direction = "DESC";
@@ -118,8 +118,8 @@ public class PublicService {
         Map<String, Object> rs = new HashMap<>();
         rs.put("id", product.getId());
         rs.put("name", product.getName());
-        rs.put("standardPrice", product.getStandardPrice());
-        rs.put("salesPrice", product.getSalesPrice());
+        rs.put("standardPrice", product.getMinPrice());
+        rs.put("salesPrice", product.getMaxPrice());
         rs.put("coverImage", product.getCoverImage().getName());
         int solid = orderItemRepo.countOrderItemByProduct(product);
         rs.put("solid", solid);

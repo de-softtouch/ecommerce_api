@@ -1,14 +1,11 @@
 package com.api.ecommerceweb.controller.publicc;
 
-import com.api.ecommerceweb.helper.PublicHelper;
-import lombok.Data;
+import com.api.ecommerceweb.helper.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
@@ -16,29 +13,75 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PublicController {
 
-    private final PublicHelper publicHelper;
+
+    private final UserHelper userHelper;
+    private final ProductHelper productHelper;
+    private final CategoryHelper categoryHelper;
+    private final BrandHelper brandHelper;
+    private final FileStorageHelper fileStorageHelper;
+    private final FeedbackHelper feedbackHelper;
+
+    @GetMapping("/categories")
+    public ResponseEntity<?> findAllNestedCategories() {
+        return categoryHelper.getCategories();
+    }
+
+    @GetMapping("/categories/{id}")
+    public ResponseEntity<?> findNestedCategory(@PathVariable long id) {
+        return categoryHelper.getNestedCategory(id);
+    }
+
+    @GetMapping("/brands")
+    public ResponseEntity<?> findBrands() {
+        return brandHelper.getAllBrands();
+    }
 
     @GetMapping("/products/newest")
     public ResponseEntity<?> getNewestProducts() {
-        return publicHelper.getNewestProducts();
+        return productHelper.getNewestProducts();
     }
 
-
+    //    search product
     @GetMapping("/products")
     public ResponseEntity<?> getProducts(@RequestParam Map<String, String> params) {
-        return publicHelper.getProducts(params);
+        return productHelper.getProducts(params);
     }
 
+    @GetMapping("/product/purchase-quantity")
+    public ResponseEntity<?> getPurchaseQuantities(@RequestParam(value = "modelId", required = false) Long modelId,
+                                                   @RequestParam("productId") Long productId,
+                                                   @RequestParam("shopId") Long shopId,
+                                                   @RequestParam("quantity") Integer quantity
+    ) {
+        return productHelper.getPurchaseQuantities(modelId, productId, shopId, quantity);
+    }
+
+    @GetMapping("/products/{id}")
+    public ResponseEntity<?> getProductById(@PathVariable Long id) {
+        return productHelper.getProductDetail(id);
+    }
+
+    @GetMapping("/products/{id}/feedbacks")
+    public ResponseEntity<?> getProductFeedBacks(@PathVariable Long id) {
+        return feedbackHelper.getFeedbacks(id);
+    }
+
+    @PostMapping
     @GetMapping("/categories")
-    public ResponseEntity<?> getCategories(){
-        return publicHelper.getCategories();
+    public ResponseEntity<?> getCategories() {
+        return categoryHelper.getCategories();
     }
 
-
-    @Data
-    public static class Param {
-        private int limit = 50;
-        private int name;
+    /*
+   check input field like 'email','phone','username'
+     */
+    @GetMapping("/validation")
+    public ResponseEntity<?> validationInput(
+            @RequestParam("input") String input,
+            @RequestParam("value") String value
+    ) {
+        return userHelper.validationInputField(input, value);
     }
+
 
 }

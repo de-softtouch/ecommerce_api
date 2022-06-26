@@ -9,6 +9,9 @@ import lombok.Setter;
 @Setter
 public class UploadFileResponse {
 
+
+    private Long id;
+
     private String fileName;
 
     private String fileDownloadUrl;

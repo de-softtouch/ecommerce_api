@@ -27,15 +27,11 @@ public class OrderItem {
     @Column(name = "qty", columnDefinition = "int default 1")
     private Integer qty;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "variation_id")
-    private Variation variation;
-
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
@@ -47,6 +43,10 @@ public class OrderItem {
     @ManyToOne
     @JoinColumn(name = "address_id")
     private Address address;
+
+    @ManyToOne
+    @JoinColumn(name = "model_id")
+    private ProductModel model;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

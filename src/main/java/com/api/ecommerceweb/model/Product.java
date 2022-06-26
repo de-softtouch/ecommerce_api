@@ -40,12 +40,13 @@ public class Product {
     @ManyToOne
     private Brand brand;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    private Set<Variation> variations = new HashSet<>();
+    @OneToMany(mappedBy = "product")
+    private List<ProductModel> models = new ArrayList<>();
 
-    private Double standardPrice;
+    private Double minPrice;
 
-    private Double salesPrice;
+    private Double maxPrice;
+
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -76,8 +77,8 @@ public class Product {
     @JoinColumn(name = "shop_id")
     private Shop shop;
     //
-    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
-    private OrderItem orderItem;
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<OrderItem> orderItems;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private Set<Feedback> feedbacks = new HashSet<>();
@@ -85,15 +86,13 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private Set<Shipment> shipments = new HashSet<>();
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    private Set<Color> colors = new HashSet<>();
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    private Set<Size> sizes = new HashSet<>();
-
-
     public void addImage(ProductImage productImage) {
         this.getImages().add(productImage);
         productImage.setProduct(this);
     }
+
+    @OneToMany(mappedBy = "product", targetEntity = Variant.class)
+    private List<Variant> variants = new LinkedList<>();
+
 
 }

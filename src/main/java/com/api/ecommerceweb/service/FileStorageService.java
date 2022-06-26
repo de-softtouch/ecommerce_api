@@ -36,17 +36,34 @@ public class FileStorageService {
         file.setName(savedFileName);
         file.setType(multipartFile.getContentType());
         file.setSize(multipartFile.getSize());
-        fileRepository.save(file);
+        //save to db
+        file = fileRepository.saveAndFlush(file);
 
         return ResponseEntity.ok(
-                new UploadFileResponse(savedFileName, fileDownloadUri, multipartFile.getContentType(), multipartFile.getSize()));
+                new UploadFileResponse(file.getId(), savedFileName, fileDownloadUri, multipartFile.getContentType(), multipartFile.getSize()));
+    }
+
+    public ResponseEntity<?> uploadFile(MultipartFile multipartFile, String dest) {
+        String savedFileName = fileStorageUtil.storeFile(multipartFile, dest);
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/v1/public/files/")
+                .path(savedFileName)
+                .toUriString();
+
+        File file = new File();
+        file.setName(savedFileName);
+        file.setType(multipartFile.getContentType());
+        file.setSize(multipartFile.getSize());
+        //save to db
+        file = fileRepository.saveAndFlush(file);
+
+        return ResponseEntity.ok(
+                new UploadFileResponse(file.getId(), savedFileName, fileDownloadUri, multipartFile.getContentType(), multipartFile.getSize()));
     }
 
     public ResponseEntity<?> downloadFile(String fileName, HttpServletRequest httpServletRequest) {
-//        load file as resource
 //        Resource resource = fileStorageUtil.loadFile(fileName);
         Resource resource = fileStorageUtil.loadFile(fileName);
-        //try to determine file's content type
         String contentType = null;
         try {
             contentType = httpServletRequest.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
@@ -62,4 +79,6 @@ public class FileStorageService {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
+
+
 }

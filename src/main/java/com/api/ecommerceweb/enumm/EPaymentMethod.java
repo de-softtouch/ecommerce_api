@@ -4,9 +4,11 @@ public enum EPaymentMethod {
 
     COD(1), CREDIT(2), DEBIT(3);
 
-      int code;
+    int code;
 
     EPaymentMethod(int code) {
         this.code = code;
     }
+
+
 }

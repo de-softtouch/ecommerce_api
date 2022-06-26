@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Entity
@@ -32,11 +33,11 @@ public class File {
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    private Date uploadDate;
+    private Date create_date;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    private Date modifyDate;
+    private Date updateDate;
 
     //
     @OneToOne(mappedBy = "image")
@@ -51,4 +52,7 @@ public class File {
     @OneToMany(mappedBy = "coverVideo", fetch = FetchType.LAZY)
     private List<Product> productVideoCovers = new ArrayList<>();
 
+
+    @ManyToMany(mappedBy = "images",fetch = FetchType.LAZY)
+    private List<Variant> variants = new ArrayList<>();
 }

@@ -16,24 +16,25 @@ public class ProductRequest {
     @Size(min = 10, max = 100)
     private String name;
 
-    @NotBlank
-    private String coverImage;
+    private Long coverImage;
 
     private String coverVideo;
 
     private Set<File> files = new HashSet<>();
 
-    private Set<String> images = new TreeSet<>();
+    private Set<Long> images = new TreeSet<>();
 
     private BrandRequest brand;
 
     private Long categoryId;
 
-    private Double standardPrice;
+    private Double minPrice;
 
-    private Double salesPrice;
+    private Double maxPrice;
 
-    private List<VariationRequest> variations = new ArrayList<>();
+    private List<VariantRequest> variants = new LinkedList<>();
+
+    private List<ProductModelRequest> models = new LinkedList<>();
 
     private Integer status = 0;
 

@@ -1,5 +1,6 @@
 package com.api.ecommerceweb.controller.publicc;
 
+import com.api.ecommerceweb.helper.UserHelper;
 import com.api.ecommerceweb.request.AuthRequest;
 import com.api.ecommerceweb.request.RegisterRequest;
 import com.api.ecommerceweb.helper.AuthHelper;
@@ -16,22 +17,25 @@ import javax.validation.Valid;
 public class AuthController {
 
     private final AuthHelper authHelper;
-
+    private final UserHelper userHelper;
 
     @GetMapping("/users/registration/validation")
     public ResponseEntity<?> validation(@RequestParam("input") String input,
                                         @RequestParam("value") String value) {
-        return authHelper.validation(input, value);
+        return userHelper.validationInputField(input, value);
     }
 
-    @PostMapping("/register")
+    /*
+    register member account
+     */
+    @PostMapping("/users/registration")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest registerRequest) {
-        return authHelper.register(registerRequest);
+        return userHelper.registerMemberAccount(registerRequest);
     }
 
     @GetMapping("/verification")
     public ResponseEntity<?> verifyAccount(@RequestHeader("code") String code) {
-        return authHelper.verifyAccount(code);
+        return userHelper.verifyAccount(code);
     }
 
     @PostMapping("/login")

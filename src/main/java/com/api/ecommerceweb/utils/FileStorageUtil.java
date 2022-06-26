@@ -81,10 +81,10 @@ public class FileStorageUtil {
     }
 
     public Resource loadFile(String fileName) {
-        String found = searchFile2(new File(this.rootDir.toUri()), fileName);
+        String rs = getFile(new File(this.rootDir.toUri()), fileName);
         Resource resource;
         try {
-            resource = new FileUrlResource(found);
+            resource = new FileUrlResource(rs);
             if (resource.exists()) {
                 return resource;
             } else {
@@ -96,21 +96,22 @@ public class FileStorageUtil {
         throw new MyFileNotFoundException("File not found " + fileName);
     }
 
+    //get all files by parent folder
     public List<File> getFiles(String folder) {
         List<File> rs = new ArrayList<>();
         File file = new File(this.rootDir.resolve(folder).toUri());
         if (!file.exists()) {
             return new ArrayList<>();
         }
-        return getFiles(file, rs);
+        return getChildren(file, rs);
     }
 
-    List<File> getFiles(File file, List<File> rs) {
+    List<File> getChildren(File file, List<File> rs) {
         if (file.isDirectory()) {
             for (File f :
                     Objects.requireNonNull(file.listFiles())) {
                 if (f.isDirectory()) {
-                    return getFiles(f, rs);
+                    return getChildren(f, rs);
                 }
                 rs.add(f);
             }
@@ -120,22 +121,29 @@ public class FileStorageUtil {
         return rs;
     }
 
-    String searchFile2(File file, String name) {
+    String getFile(File file, String name) {
         if (file.isDirectory()) {
-            File[] arr = file.listFiles();
-            assert arr != null;
-            for (File f : arr) {
-                String path = searchFile2(f, name);
-                if (path != null)
-                    return path;
+            for (File f :
+                    file.listFiles()) {
+                String s = getFile(f, name);
+                if (s != null) {
+                    return s;
+                }
             }
         } else {
-            if (file.getName().equals(name)) {
-                return file.getPath();
+            String rs = null;
+            if (equalName(name, file)) {
+                log.info("FOUND FILE NAME : " + file.getName());
+                rs = file.getPath();
             }
+            return rs;
         }
-        throw new MyFileNotFoundException("Not found");
+        return null;
+    }
 
+    boolean equalName(String name, File file) {
+        String n = file.getName().split("\\.")[0];
+        return name.equals(n);
     }
 
 

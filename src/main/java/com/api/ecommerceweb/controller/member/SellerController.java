@@ -1,14 +1,18 @@
 package com.api.ecommerceweb.controller.member;
 
+import com.api.ecommerceweb.helper.ProductHelper;
+import com.api.ecommerceweb.helper.UserHelper;
 import com.api.ecommerceweb.request.BrandRequest;
 import com.api.ecommerceweb.request.ProductRequest;
 import com.api.ecommerceweb.helper.SellerHelper;
 import com.api.ecommerceweb.request.ShopRequest;
+import com.api.ecommerceweb.request.UpdateShopRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/seller")
@@ -16,10 +20,12 @@ import javax.validation.Valid;
 public class SellerController {
 
     private final SellerHelper sellerHelper;
+    private final UserHelper userHelper;
+    private final ProductHelper productHelper;
 
     @GetMapping("/products")
-    public ResponseEntity<?> getAllProducts() {
-        return sellerHelper.getAllProducts();
+    public ResponseEntity<?> getAllProducts(@RequestParam Map<String, String> params) {
+        return productHelper.getProductsInShop(params);
     }
 
     @GetMapping("/products/{id}")
@@ -29,7 +35,8 @@ public class SellerController {
 
     @PostMapping("/products")
     public ResponseEntity<?> updateProduct(@RequestBody @Valid ProductRequest productRequest) {
-        return sellerHelper.updateProduct(productRequest);
+//        return sellerHelper.updateProduct(productRequest);
+        return productHelper.saveProduct(productRequest);
     }
 
     @DeleteMapping("/products/{id}")
@@ -48,15 +55,15 @@ public class SellerController {
     }
 
     @GetMapping("/orders")
-    public ResponseEntity<?> getOrders() {
-        return sellerHelper.getOrders();
+    public ResponseEntity<?> getOrders(@RequestParam Map<String, String> params) {
+        return sellerHelper.getOrders(params);
     }
 
     @GetMapping("/orders/{id}")
-    public ResponseEntity<?> getOrder(@PathVariable("id") Long id){
+    public ResponseEntity<?> getOrder(@PathVariable("id") Long id) {
         return sellerHelper.getOrder(id);
-
     }
+
     @PostMapping("/orders/{id}")
     public ResponseEntity<?> updateOrder(@PathVariable("id") Long id, @RequestParam Integer status) {
         return sellerHelper.updateOrder(id, status);
@@ -68,13 +75,8 @@ public class SellerController {
     }
 
 
-    @GetMapping("/users/shops")
-    public ResponseEntity<?> getShopDetail() {
-        return sellerHelper.getShopDetail();
-    }
-
-    @PostMapping("/users/shops")
-    public ResponseEntity<?> updateShop(@RequestBody ShopRequest shopRequest){
-        return sellerHelper.updateShop(shopRequest);
+    @PostMapping("/shops")
+    public ResponseEntity<?> updateShop(@RequestBody @Valid UpdateShopRequest request) {
+        return userHelper.updateShop(request);
     }
 }

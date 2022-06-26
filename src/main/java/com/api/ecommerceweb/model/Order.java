@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.*;
@@ -40,14 +41,14 @@ public class Order {
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false)
-    private Date orderDate;
+    private Date createDate;
 
-//    @ManyToOne
-//    private Shop shop;
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column
+    private Date updateDate;
 
-//    @ManyToMany
-//    @JoinTable(name = "order_shops",joinColumns = @JoinColumn(name = "order_id"),inverseJoinColumns = @JoinColumn(name = "shop_id"))
-//    private List<Shop> shops = new ArrayList<>();
+    private Integer active = 1;
 
     //
     @OneToMany(mappedBy = "order")

@@ -1,29 +1,25 @@
 package com.api.ecommerceweb.request;
 
 import com.api.ecommerceweb.model.Shop;
-import lombok.Data;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
-@Data
-public class OrderItemRequest {
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class OrderItemRequest implements Serializable {
 
     @NotNull
     private Long productId;
 
-    @NotNull
-    private Long variantId;
+    private Long modelId;
 
-    @NotNull
     private String message;
 
     @NotNull
-    private Long shopId;
-
-    @NotNull
-    private Long addressId;
-
-    @NotNull
-    private Integer qty;
+    private Integer qty = 1;
 
 }

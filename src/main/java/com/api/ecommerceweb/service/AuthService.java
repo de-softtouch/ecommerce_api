@@ -25,8 +25,6 @@ import org.springframework.stereotype.Component;
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @Component
@@ -40,15 +38,16 @@ public class AuthService {
     private final RoleRepository roleRepo;
     private final PasswordEncoder passwordEncoder;
 
-
     public ResponseEntity<?> login(AuthRequest authRequest) {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authRequest.getEmail(), authRequest.getPassword()
         ));
         CustomUserDetails customUserDetails = (CustomUserDetails) authenticate.getPrincipal();
-        User user = customUserDetails.getUser();
-        Map<String, Object> userInfoResp = toBasicUserInfo(user);
-        return ResponseEntity.ok(userInfoResp);
+        User user = userRepo.getById(customUserDetails.getId());
+        Map<String, String> tokens = Map.of("access_token", jwtTokenUtil.generateAccessToken(user),
+                "refresh_token", jwtTokenUtil.generateRefreshToken(user)
+        );
+        return ResponseEntity.ok(tokens);
     }
 
     private Map<String, Object> toBasicUserInfo(User user) {
@@ -136,47 +135,25 @@ public class AuthService {
         if (input.isBlank() || value.isBlank()) {
             return false;
         }
-        if (input.equalsIgnoreCase("email")) {
-            if (!validEmail(value)) {
-                throw new ValidationException("Email is not valid");
-            }
-            if (userRepo.existsByEmail(value)) {
-                throw new ValidationException("Email has been used");
-            }
-            return true;
-        } else if (input.equals("phone")) {
-            if (!validateMobileNumber(value)) {
-                throw new ValidationException("Phone is not valid");
-            }
-            if (userRepo.existsByPhone(value)) {
-                throw new ValidationException("Phone number has been used");
-            }
-            return true;
-        }
+//        if (input.equalsIgnoreCase("email")) {
+//            if (!ValidatorUtil.isEmail(value)) {
+//                throw new ValidationException("Email is not valid");
+//            }
+//            if (userRepo.existsByEmail(value)) {
+//                throw new ValidationException("Email has been used");
+//            }
+//            return true;
+//        } else if (input.equals("phone")) {
+//            if (!ValidatorUtil.isPhoneNumber(value)) {
+//                throw new ValidationException("Phone is not valid");
+//            }
+//            if (userRepo.existsByPhone(value)) {
+//                throw new ValidationException("Phone number has been used");
+//            }
+//            return true;
+//        }
         return false;
     }
 
-    public boolean validEmail(String email) {
-        Pattern pattern = Pattern.compile("^.+@.+\\..+$");
-        Matcher matcher = pattern.matcher(email.trim());
-        if (matcher.matches()) {
-            return true;
-        }
-        return false;
-    }
 
-    public boolean validateMobileNumber(String mobileNumber) {
-//        {"2055550125","202 555 0125", "(202) 555-0125", "+111 (202) 555-0125",
-//                "636 856 789", "+111 636 856 789", "636 85 67 89", "+111 636 85 67 89"}
-        String patterns
-                = "^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$"
-                + "|^(\\+\\d{1,3}( )?)?(\\d{3}[ ]?){2}\\d{3}$"
-                + "|^(\\+\\d{1,3}( )?)?(\\d{3}[ ]?)(\\d{2}[ ]?){2}\\d{2}$";
-        Pattern regexPattern = Pattern.compile(patterns);
-        Matcher regMatcher = regexPattern.matcher(mobileNumber);
-        if (regMatcher.matches()) {
-            return true;
-        }
-        return false;
-    }
 }

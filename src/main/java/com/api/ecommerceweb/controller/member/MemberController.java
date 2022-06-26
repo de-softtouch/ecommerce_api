@@ -1,97 +1,125 @@
 package com.api.ecommerceweb.controller.member;
 
+import com.api.ecommerceweb.helper.FeedbackHelper;
+import com.api.ecommerceweb.helper.OrderHelper;
+import com.api.ecommerceweb.helper.UserHelper;
 import com.api.ecommerceweb.request.*;
-import com.api.ecommerceweb.helper.MemberHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/member")
 @RequiredArgsConstructor
 public class MemberController {
 
-    private final MemberHelper memberHelper;
-
+    private final UserHelper userHelper;
+    private final FeedbackHelper feedbackHelper;
+    private final OrderHelper orderHelper;
 
     @GetMapping
     public ResponseEntity<?> getCurrentUserDetails() {
-        return memberHelper.getCurrentUserDetails();
+        return userHelper.getCurrentUserDetails();
     }
 
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<?> updateCurrentUserDetails(
             @ModelAttribute @Valid AccountUpdateRequest accountUpdateRequest,
             @RequestParam(value = "avt", required = false) MultipartFile multipartFile) {
-        return memberHelper.updateCurrentUserDetails(accountUpdateRequest, multipartFile);
+        return userHelper.updateCurrentUserDetails(accountUpdateRequest, multipartFile);
     }
 
-    @GetMapping("/addresses")
+    @GetMapping("/users/me/addresses")
     public ResponseEntity<?> getAddresses() {
-        return memberHelper.getAddresses();
+        return userHelper.getAddresses();
     }
 
-    @PostMapping("/addresses")
+    @PostMapping("/users/me/addresses")
     public ResponseEntity<?> updateAddress(@RequestBody @Valid AddressRequest addressRequest) {
-        return memberHelper.updateAddress(addressRequest);
+        return userHelper.updateAddress(addressRequest);
     }
 
     @DeleteMapping("/addresses/{id}")
     public ResponseEntity<?> deleteAddress(@PathVariable long id) {
-        return memberHelper.deleteAddress(id);
+        return userHelper.deleteAddress(id);
     }
 
     @GetMapping("/files")
     public ResponseEntity<?> getFiles() {
-        return memberHelper.getFiles();
+        return userHelper.getFiles();
     }
 
     @GetMapping("/verification")
     public ResponseEntity<?> getVerificationCode() {
-        return memberHelper.getVerificationCode();
+        return userHelper.getVerificationCode();
     }
 
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest) {
-        return memberHelper.resetPassword(resetPasswordRequest);
+        return userHelper.resetPassword(resetPasswordRequest);
     }
 
     @GetMapping("/orders")
-    public ResponseEntity<?> getOrders() {
-        return memberHelper.getOrders();
+    public ResponseEntity<?> getOrders(@RequestParam Map<String, String> params) {
+        return userHelper.getOrders(params);
     }
 
     @PostMapping("/orders")
     public ResponseEntity<?> orders(@RequestBody @Valid OrderRequest request) {
-        return memberHelper.orders(request);
+        return orderHelper.order(request);
     }
+
 
     @PostMapping("/orders/{id}")
     public ResponseEntity<?> cancelOrder(@PathVariable("id") Long id) {
-        return memberHelper.cancelOrder(id);
+        return userHelper.cancelOrder(id);
     }
 
     @GetMapping("/feedbacks")
     public ResponseEntity<?> getFeedBacks() {
-        return memberHelper.getFeedBacks();
+        return userHelper.getFeedBacks();
     }
 
     @PostMapping("/feedbacks")
     public ResponseEntity<?> postFeedback(@RequestBody @Valid FeedbackRequest feedbackRequest) {
-        return memberHelper.postFeedback(feedbackRequest);
+        return userHelper.postFeedback(feedbackRequest);
     }
 
     @PostMapping("/users/shops")
     public ResponseEntity<?> registerShop(@RequestBody ShopRequest shopRequest) {
-        return memberHelper.registerShop(shopRequest);
+        return userHelper.registerShop(shopRequest);
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<?> getCurrentUserDetail(){
-        return memberHelper.getCurrentUserDetails();
+    @GetMapping("/users/me")
+    public ResponseEntity<?> getCurrentUserDetail() {
+        return userHelper.getCurrentUserDetails();
+    }
+
+
+    @PostMapping("/users/update")
+    public ResponseEntity<?> updateAccount(@RequestBody @Valid UpdateAccountRequest updateAccountRequest) {
+        return userHelper.updateMemberAccount(updateAccountRequest);
+    }
+
+
+    /*
+    registration shop
+     */
+    @PostMapping("/shops/registration")
+    public ResponseEntity<?> registrationShop(@RequestBody @Valid ShopRequest shopRequest) {
+        return userHelper.registerShop(shopRequest);
+    }
+
+    /*
+    activate shop
+     */
+    @GetMapping("/shops/registration/verification")
+    public ResponseEntity<?> activateShop(@RequestHeader("code") String code) {
+        return userHelper.activeShop(code);
     }
 
 }

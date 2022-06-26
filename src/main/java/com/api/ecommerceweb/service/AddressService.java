@@ -26,4 +26,8 @@ public class AddressService {
         address.setPostCode(addressRequest.getPostCode());
         return addressRepo.save(address);
     }
+
+    public Address getById(Long addressId) {
+        return addressRepo.findById(addressId).orElse(null);
+    }
 }

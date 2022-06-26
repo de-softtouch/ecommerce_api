@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class SellerHelper {
@@ -37,9 +39,9 @@ public class SellerHelper {
         return sellerService.deleteProduct(id);
     }
 
-    public ResponseEntity<?> getOrders() {
+    public ResponseEntity<?> getOrders(Map<String,String> params) {
 //        return sellerHelper.getOrders();
-        return sellerService.getOrders2();
+        return sellerService.getOrders2(params);
     }
 
     public ResponseEntity<?> updateOrder(Long id, Integer status) {

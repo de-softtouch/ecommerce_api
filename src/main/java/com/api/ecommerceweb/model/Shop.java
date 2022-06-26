@@ -23,13 +23,24 @@ public class Shop {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     private String banner;
 
+    @Column(nullable = false)
     private String description;
-    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
-    private Set<User> owners = new HashSet<>();
+
+    private Integer status;
+
+    private Integer active;
+    @Column(nullable = false)
+
+    private String email;
+    @Column(nullable = false)
+    private String numberPhone;
+
+    private String verificationCode;
     //
     @OneToOne
     private Address address;
@@ -37,7 +48,8 @@ public class Shop {
     @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
     private List<Product> products = new ArrayList<>();
 
-
+    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY)
+    private Set<User> owners = new HashSet<>();
 
 
 }

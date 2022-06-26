@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "payment_methods")
@@ -22,8 +24,11 @@ public class PaymentMethod {
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "payment")
-    private EPaymentMethod EPaymentMethod;
+    private EPaymentMethod method;
 
     private int active;
+
+    @OneToMany(mappedBy = "paymentMethod", fetch = FetchType.LAZY)
+    private List<Payment> paymentList = new ArrayList<>();
 
 }

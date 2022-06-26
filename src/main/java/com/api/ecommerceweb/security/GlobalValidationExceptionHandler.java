@@ -1,27 +1,31 @@
 package com.api.ecommerceweb.security;
 
+import com.api.ecommerceweb.reponse.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 
 @ControllerAdvice
-public class GlobalValidationExceptionHandler {
+class ValidationException {
 
-    @ExceptionHandler({BindException.class})
-    public ResponseEntity<Object> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return ResponseEntity.badRequest().body(errors);
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
+    public ResponseEntity<?> handleException(MethodArgumentNotValidException e) {
+        List<ObjectError> errors = e.getBindingResult().getAllErrors();
+
+        List<String> details =
+                errors.stream().map(err -> (((FieldError) err).getField()) + " " + err.getDefaultMessage()).collect(Collectors.toList());
+        ErrorResponse res = new ErrorResponse("Validation exception ", details);
+        return ResponseEntity.badRequest().body(res);
     }
 }
+

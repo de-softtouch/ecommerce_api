@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Data
 public class RegisterRequest {
@@ -15,7 +16,11 @@ public class RegisterRequest {
     @NotBlank
     private String password;
 
-    private int gender =2;
+    @NotBlank
+//    @Pattern(regexp = "\\d{10}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}", message = "phone is not valid")
+    private String phone;
+
+    private int gender = 2;
 
     private String fullName;
 

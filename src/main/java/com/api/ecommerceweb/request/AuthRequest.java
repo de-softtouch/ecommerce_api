@@ -9,6 +9,13 @@ import javax.validation.constraints.Size;
 @Data
 public class AuthRequest {
 
+
+    private String fullName;
+
+    private String phone;
+
+    private Integer gender;
+
     @NotBlank(message = "Email may not be blank")
     @Email(message = "Email is not valid")
     private String email;

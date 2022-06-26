@@ -15,8 +15,10 @@ public class ShopRequest {
     @NotBlank
     private String description;
 
+    @NotBlank
     private String email;
 
+    @NotBlank
     private String phone;
 
     private AddressRequest address;

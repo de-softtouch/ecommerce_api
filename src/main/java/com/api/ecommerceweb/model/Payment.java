@@ -35,4 +35,8 @@ public class Payment {
     //
     @OneToOne(mappedBy = "payment")
     private Order order;
+    @ManyToOne(optional = false)
+    private PaymentMethod paymentMethod;
+
+
 }

@@ -30,12 +30,12 @@ public class AdminService {
     private final FileRepository fileRepo;
 
     public ResponseEntity<?> getCategories() {
-        List<Category> bigParents = categoryRepo.findAllByParentOrderByPosAscNameAsc(null);
+        List<Category> root = categoryRepo.findAllByParentOrderByPosAscNameAsc(null);
         //root
-        List<CategoryDTO> categoryDTOS = bigParents.stream().map(CategoryMapper::toCategoryDTO).collect(Collectors.toList());
+        List<CategoryDTO> categoryDTOS = root.stream().map(CategoryMapper::toCategoryDTO).collect(Collectors.toList());
         //
         for (int i = 0; i < categoryDTOS.size(); i++) {
-            getChildren(bigParents.get(i), categoryDTOS.get(i).getChildren(), 1);
+            getChildren(root.get(i), categoryDTOS.get(i).getChildren(), 1);
         }
         return ResponseEntity.ok(categoryDTOS);
     }
