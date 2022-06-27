@@ -6,6 +6,7 @@ import com.api.ecommerceweb.mapper.AddressMapper;
 import com.api.ecommerceweb.model.*;
 import com.api.ecommerceweb.reponse.BaseResponseBody;
 import com.api.ecommerceweb.reponse.BasicUserInfoResponse;
+import com.api.ecommerceweb.reponse.FeedbackResponse;
 import com.api.ecommerceweb.repository.*;
 import com.api.ecommerceweb.request.*;
 import com.api.ecommerceweb.security.CustomUserDetails;
@@ -317,7 +318,7 @@ public class UserService {
         //items
         List<Object> orderItems = new ArrayList<>();
         for (OrderItem item :
-                order.getOrderItems()) {
+                order.getItems()) {
             Map<String, Object> o = new HashMap<>();
             o.put("qty", item.getQty());
             o.put("message", item.getMessage());
@@ -376,10 +377,10 @@ public class UserService {
 
     public ResponseEntity<?> postFeedback(FeedbackRequest request) {
         //make sure user already have bought product
-        Optional<Order> optionalOrder = orderRepo.findByIdAndUser(request.getProductId(), getCurrentUser());
-        if (optionalOrder.isEmpty()) {
-            return ResponseEntity.badRequest().body("User have not bought product yet");
-        }
+//        Optional<Order> optionalOrder = orderRepo.findByIdAndUser(request.getProductId(), getCurrentUser());
+//        if (optionalOrder.isEmpty()) {
+//            return ResponseEntity.badRequest().body("User have not bought product yet");
+//        }
         Optional<Product> optionalProduct = productRepo.findById(request.getProductId());
         if (optionalProduct.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -390,11 +391,14 @@ public class UserService {
         } else {
             feedback = new Feedback();
             feedback.setProduct(optionalProduct.get());
+            feedback.setStatus(1);
+            feedback.setUser(getCurrentUser());
         }
         feedback.setComment(request.getComment());
         feedback.setRating(request.getRating());
-        feedbackRepo.save(feedback);
-        return ResponseEntity.ok("Save feedback success");
+        feedback = feedbackRepo.saveAndFlush(feedback);
+        FeedbackResponse data = modelMapper.map(feedback, FeedbackResponse.class);
+        return ResponseEntity.ok(BaseResponseBody.success(data, "save feedback success", null));
     }
 
 
@@ -420,7 +424,7 @@ public class UserService {
             orderItem.setProduct(optionalProduct.get());
             //variant
 
-            order.getOrderItems().add(orderItem);
+            order.getItems().add(orderItem);
             orderItem.setOrder(order);
             orderItemRepo.save(orderItem);
             //

@@ -32,6 +32,8 @@ public class Feedback {
 
     private Integer sellerRating;
 
+    private Integer status;
+
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(updatable = false)

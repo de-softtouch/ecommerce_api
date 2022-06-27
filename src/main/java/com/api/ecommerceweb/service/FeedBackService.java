@@ -2,6 +2,7 @@ package com.api.ecommerceweb.service;
 
 import com.api.ecommerceweb.model.Feedback;
 import com.api.ecommerceweb.model.Product;
+import com.api.ecommerceweb.model.Shop;
 import com.api.ecommerceweb.repository.FeedbackRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,5 +19,10 @@ public class FeedBackService {
 
     public List<Feedback> getFeedbacks(Product product) {
         return repo.findByProduct(product);
+    }
+
+    public List<Feedback> getShopFeedbacks(Shop shop) {
+        return repo.findAllByProduct_Shop(shop);
+
     }
 }

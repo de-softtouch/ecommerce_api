@@ -1,15 +1,15 @@
 package com.api.ecommerceweb.reponse;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.io.Serializable;
 import java.util.*;
 
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class ProductModelResponse {
+@NoArgsConstructor
+@Getter
+@Setter
+public class ProductModelResponse implements Serializable {
 
     private Long id;
 

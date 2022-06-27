@@ -32,4 +32,12 @@ public class OrderService {
     public Order saveFlush(Order order) {
         return orderRepo.saveAndFlush(order);
     }
+
+    public List<Order> getUserOrders(Long userId, Integer status) {
+        return orderRepo.getUserOrdersNative(status, userId);
+    }
+
+    public List<Order> getShopOrders(Long ownerId,Integer status){
+        return orderRepo.getShopOrders(ownerId,status);
+    }
 }

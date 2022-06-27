@@ -125,7 +125,7 @@ public class UserHelper {
             user.setVerificationCode(code);
         } catch (MessagingException | UnsupportedEncodingException e) {
             e.printStackTrace();
-            log.error("Failed to create member account {}",e.getMessage());
+            log.error("Failed to create member account {}", e.getMessage());
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
         user = userService.save(user);
@@ -137,7 +137,7 @@ public class UserHelper {
         if (user != null) {
             user.setActive(1);
             user.setVerificationCode(null);
-             userService.save(user);
+            userService.save(user);
             Map<String, String> tokens = Map.of("access_token", jwtTokenUtil.generateAccessToken(user),
                     "refresh_token", jwtTokenUtil.generateRefreshToken(user)
             );

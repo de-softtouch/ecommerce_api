@@ -27,6 +27,7 @@ public class FeedbackResponse {
 
     private Integer sellerRating;
 
+    private BaseProductResponse product;
 
     private BasicUserInfoResponse user;
 }

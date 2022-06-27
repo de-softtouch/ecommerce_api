@@ -84,10 +84,16 @@ public class MemberController {
         return userHelper.getFeedBacks();
     }
 
-    @PostMapping("/feedbacks")
+    @PostMapping("/users/me/feedbacks")
     public ResponseEntity<?> postFeedback(@RequestBody @Valid FeedbackRequest feedbackRequest) {
         return userHelper.postFeedback(feedbackRequest);
     }
+
+    @GetMapping("/users/me/shop/feedbacks")
+    public ResponseEntity<?> getFeedbacks() {
+        return feedbackHelper.getShopFeedbacks();
+    }
+
 
     @PostMapping("/users/shops")
     public ResponseEntity<?> registerShop(@RequestBody ShopRequest shopRequest) {
@@ -122,4 +128,22 @@ public class MemberController {
         return userHelper.activeShop(code);
     }
 
+
+    @GetMapping("/users/me/orders")
+    public ResponseEntity<?> getCurrentUserOrders(@RequestParam Map<String, String> param) {
+        return orderHelper.getCurrentUserOrders(param);
+
+    }
+
+    @GetMapping("/users/me/shop/orders")
+    public ResponseEntity<?> getCurrentUserShopOrders(@RequestParam Map<String, String> param) {
+        return orderHelper.getCurrentUserShopOrderItems(param);
+
+    }
+
+    @GetMapping("/users/me/shop/orders/status")
+    public ResponseEntity<?> getOrderItemStatusReport(@RequestParam Map<String, String> param) {
+        return orderHelper.getOrderItemStatusTypes();
+
+    }
 }

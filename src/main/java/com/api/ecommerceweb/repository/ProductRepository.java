@@ -42,4 +42,22 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> getProductsInShop(@Param("shopId") Long shopId, @Param("status") Integer status, Pageable pageable);
 
     boolean existsByShop(Shop shop);
+
+//    TODO: dem so luong product trong order
+//    @Query(
+//            nativeQuery = true,
+//            value = "SELECT p.*,count(o.id) as count FROM orders o JOIN order_items oi ON o.id = oi.order_id\n" +
+//                    "JOIN products p ON p.id = oi.product_id\n" +
+//                    "JOIN shops s ON s.id = p.shop_id\n" +
+//                    "JOIN users u ON u.shop_id = s.id\n" +
+//                    "WHERE u.id = 1 AND  p.shop_id = s.id AND oi.product_id = p.id\n" +
+//                    "group by p.id"
+//    )
+//    List<Product> getProductInOrder();
+
+
+
+
+
+
 }

@@ -44,19 +44,32 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                     "JOIN users u ON s.id = u.shop_id\n" +
                     "WHERE u.id = :sellerId AND o.id = :orderId"
     )
-    Optional<Order> getShopOrderNative(@Param("sellerId")Long sellerId,@Param("orderId")Long orderId);
+    Optional<Order> getShopOrderNative(@Param("sellerId") Long sellerId, @Param("orderId") Long orderId);
 
 
-//    @Query(
-//            nativeQuery = true,
-//            value = "SELECT o.* FROM orders o JOIN order_items oi ON o.id = oi.id" +
-//                    " JOIN products p ON p.id = oi.product_id" +
-//                    " JOIN shops s ON s.id = p.shop_id WHERE s.id =?1"
-//    )
-//    List<Order> findByOrderItemsProductShop(Long shopId);
-
-    List<Order> findDistinctByOrderItemsProductShop(Shop shop);
+    List<Order> findDistinctByItemsProductShop(Shop shop);
 
 
-//    Optional<Order> findByIdAndShops(Long id, Shop shop);
+    @Query(
+            nativeQuery = true,
+            value = "SELECT * FROM orders o JOIN users u ON o.user_id = u.id\n" +
+                    "JOIN order_items oi ON o.id = oi.id \n" +
+                    "WHERE u.id =:userId\n" +
+                    "AND (:status IS NULL OR o.status = :status)\n" +
+                    "AND (:status IS NULL OR oi.status = :status)"
+    )
+    List<Order> getUserOrdersNative(@Param("status") Integer status, @Param("userId") Long userId);
+
+    @Query(
+            nativeQuery = true,
+            value = "SELECT * FROM orders o JOIN order_items oi ON o.id = oi.order_id\n" +
+                    "JOIN products p ON p.id = oi.product_id\n" +
+                    "JOIN shops s ON s.id = p.shop_id\n" +
+                    "JOIN users u ON u.shop_id = s.id\n" +
+                    "WHERE u.id = :userId\n" +
+                    "AND (:status IS NULL OR o.status = :status)\n" +
+                    "AND (:status IS NULL OR oi.status = :status)\n" +
+                    "AND p.shop_id = s.id AND oi.product_id = p.id"
+    )
+    List<Order> getShopOrders(@Param("userId") Long shopOwnerId, @Param("status") Integer status);
 }

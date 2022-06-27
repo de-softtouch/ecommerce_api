@@ -55,8 +55,8 @@ public class Order {
     @OrderBy("posIndex DESC ")
     private List<OrderSellerMessage> sellerMessages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "order")
-    private Set<OrderItem> orderItems = new HashSet<>();
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    private Set<OrderItem> items = new HashSet<>();
 
 
 }

@@ -233,7 +233,7 @@ public class SellerService {
     public ResponseEntity<?> getOrders() {
         //TODO : sua null thanh user
         List<Object> rs = new ArrayList<>();
-        List<Order> orders = orderRepo.findDistinctByOrderItemsProductShop(null);
+        List<Order> orders = orderRepo.findDistinctByItemsProductShop(null);
         for (Order order :
                 orders) {
             Map<String, Object> o = toOrderDetailsResponse(order);
@@ -304,7 +304,7 @@ public class SellerService {
         //items
         List<Object> orderItems = new ArrayList<>();
         for (OrderItem item :
-                order.getOrderItems()) {
+                order.getItems()) {
             Map<String, Object> o = new HashMap<>();
             o.put("qty", item.getQty());
             o.put("message", item.getMessage());
