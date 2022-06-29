@@ -28,20 +28,29 @@ public class ProductRequest {
 
     private Long categoryId;
 
+    private Integer stock;
+
     private Double minPrice;
 
     private Double maxPrice;
+
+    private Double standardPrice;
+
+    private Double salesPrice;
 
     private List<VariantRequest> variants = new LinkedList<>();
 
     private List<ProductModelRequest> models = new LinkedList<>();
 
-    private Integer status = 0;
+    private Integer status = 1;
 
     private Integer active = 1;
 
     private String description;
 
     private String shortDescription;
+
+
+    private Set<Long> removedOptions = new HashSet<>();
 
 }

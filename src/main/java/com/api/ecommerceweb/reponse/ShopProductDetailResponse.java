@@ -1,16 +1,15 @@
 package com.api.ecommerceweb.reponse;
 
-import com.api.ecommerceweb.model.ProductModel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.*;
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class ProductDetailResponse {
+@Getter
+@Setter
+public class ShopProductDetailResponse  implements Serializable {
 
     private Long id;
 
@@ -38,7 +37,7 @@ public class ProductDetailResponse {
 
     private List<ProductModelResponse> models = new LinkedList<>();
 
-    private List<VariantResponse> variants = new LinkedList<>();
+    private List<ShopVariantResponse> variants = new LinkedList<>();
 
     private List<ProductImageResponse> images = new LinkedList<>();
 

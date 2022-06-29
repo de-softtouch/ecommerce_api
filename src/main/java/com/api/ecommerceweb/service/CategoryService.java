@@ -3,9 +3,11 @@ package com.api.ecommerceweb.service;
 import com.api.ecommerceweb.dto.CategoryDTO;
 import com.api.ecommerceweb.mapper.CategoryMapper;
 import com.api.ecommerceweb.model.Category;
+import com.api.ecommerceweb.reponse.BaseResponseBody;
 import com.api.ecommerceweb.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;

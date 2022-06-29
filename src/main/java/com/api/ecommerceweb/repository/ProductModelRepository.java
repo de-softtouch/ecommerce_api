@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface ProductModelRepository extends JpaRepository<ProductModel, Long> {
 
-    List<ProductModel> findByProduct(Product product);
+    List<ProductModel> findByProductAndStatus(Product product, Integer status);
 
     Optional<ProductModel> findByIdAndProduct(Long id, Product product);
 
@@ -46,4 +46,7 @@ public interface ProductModelRepository extends JpaRepository<ProductModel, Long
                                                @Param("modelId") Long modelId,
                                                @Param("shopId") Long shopId,
                                                @Param("quantity") Integer quantity);
+
+    List<ProductModel> findAllByVariantOptions(VariantOption variantOption);
+
 }

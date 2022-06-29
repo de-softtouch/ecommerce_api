@@ -19,6 +19,10 @@ public class ProductResponse {
 
     private Double maxPrice;
 
+    private Double standardPrice;
+
+    private Double salesPrice;
+
     private Integer stock;
 
     private String coverImage;

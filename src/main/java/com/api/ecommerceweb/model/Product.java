@@ -41,12 +41,17 @@ public class Product {
     private Brand brand;
 
     @OneToMany(mappedBy = "product")
-    private List<ProductModel> models = new ArrayList<>();
+    private List<ProductModel> models = new LinkedList<>();
+
+    private Integer stock;
 
     private Double minPrice;
 
     private Double maxPrice;
 
+    private Double standardPrice;
+
+    private Double salesPrice;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

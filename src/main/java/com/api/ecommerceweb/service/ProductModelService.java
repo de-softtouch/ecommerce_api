@@ -17,12 +17,16 @@ public class ProductModelService {
 
     private final ProductModelRepository productModelRepo;
 
-    public ProductModel getById(Long id){
+    public ProductModel getById(Long id) {
         return productModelRepo.findById(id).orElse(null);
     }
 
-    public List<ProductModel> getProductModels(Product product) {
-        return productModelRepo.findByProduct(product);
+    public List<ProductModel> getProductModels(Product product, Integer status) {
+        return productModelRepo.findByProductAndStatus(product, status);
+    }
+
+    public List<ProductModel> getAllByVariantOption(VariantOption variantOption) {
+        return productModelRepo.findAllByVariantOptions(variantOption);
     }
 
     public ProductModel getByIdAndProduct(Long id, Product product) {

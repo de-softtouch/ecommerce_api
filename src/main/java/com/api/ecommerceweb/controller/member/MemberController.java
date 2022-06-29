@@ -2,6 +2,7 @@ package com.api.ecommerceweb.controller.member;
 
 import com.api.ecommerceweb.helper.FeedbackHelper;
 import com.api.ecommerceweb.helper.OrderHelper;
+import com.api.ecommerceweb.helper.ProductHelper;
 import com.api.ecommerceweb.helper.UserHelper;
 import com.api.ecommerceweb.request.*;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class MemberController {
     private final UserHelper userHelper;
     private final FeedbackHelper feedbackHelper;
     private final OrderHelper orderHelper;
+    private final ProductHelper productHelper;
 
     @GetMapping
     public ResponseEntity<?> getCurrentUserDetails() {
@@ -92,6 +94,11 @@ public class MemberController {
     @GetMapping("/users/me/shop/feedbacks")
     public ResponseEntity<?> getFeedbacks() {
         return feedbackHelper.getShopFeedbacks();
+    }
+
+    @GetMapping("/users/me/shop/products/{productId}")
+    public ResponseEntity<?> getProductDetailInShop(@PathVariable("productId") Long productId) {
+        return productHelper.getShopProductDetail(productId);
     }
 
 
