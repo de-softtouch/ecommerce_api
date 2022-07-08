@@ -18,7 +18,7 @@ public class PublicController {
     private final ProductHelper productHelper;
     private final CategoryHelper categoryHelper;
     private final BrandHelper brandHelper;
-    private final FileStorageHelper fileStorageHelper;
+    private final FileUploadHelper fileStorageHelper;
     private final FeedbackHelper feedbackHelper;
 
     @GetMapping("/categories")
@@ -81,6 +81,11 @@ public class PublicController {
             @RequestParam("value") String value
     ) {
         return userHelper.validationInputField(input, value);
+    }
+
+    @GetMapping("/files/{name}")
+    public ResponseEntity<?> getFileByName(@PathVariable("name") String name) {
+        return fileStorageHelper.getImage(name);
     }
 
 

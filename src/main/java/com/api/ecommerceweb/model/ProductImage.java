@@ -24,11 +24,12 @@ public class ProductImage {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("imageId")
-    private File image;
+    private FileUpload image;
 
     @Column(name = "pos")
     private Integer pos;
 
+    private Integer status;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

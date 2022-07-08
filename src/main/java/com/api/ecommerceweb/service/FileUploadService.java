@@ -1,6 +1,6 @@
 package com.api.ecommerceweb.service;
 
-import com.api.ecommerceweb.model.File;
+import com.api.ecommerceweb.model.FileUpload;
 import com.api.ecommerceweb.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,11 +11,11 @@ public class FileUploadService {
 
     private final FileRepository fileRepo;
 
-    public File getFile(String name){
+    public FileUpload getFile(String name){
         return fileRepo.findByName(name).orElse(null);
     }
 
-    public File getFileById(Long id){
+    public FileUpload getFileById(Long id){
         return fileRepo.findById(id).orElse(null);
     }
 }

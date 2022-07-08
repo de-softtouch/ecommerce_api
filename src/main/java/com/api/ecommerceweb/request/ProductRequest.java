@@ -1,6 +1,6 @@
 package com.api.ecommerceweb.request;
 
-import com.api.ecommerceweb.model.File;
+import com.api.ecommerceweb.model.FileUpload;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -20,7 +20,7 @@ public class ProductRequest {
 
     private String coverVideo;
 
-    private Set<File> files = new HashSet<>();
+    private Set<FileUpload> fileUploads = new HashSet<>();
 
     private Set<Long> images = new TreeSet<>();
 

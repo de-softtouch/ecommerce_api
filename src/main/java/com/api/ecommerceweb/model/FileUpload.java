@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class File {
+public class FileUpload {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +27,13 @@ public class File {
 
     private String name;
 
+    private String originalName;
+
     private String type;
 
     private Long size;
+
+    private String ext;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

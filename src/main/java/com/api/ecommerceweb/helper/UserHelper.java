@@ -4,9 +4,12 @@ import com.api.ecommerceweb.model.Shop;
 import com.api.ecommerceweb.model.User;
 import com.api.ecommerceweb.reponse.BaseResponseBody;
 import com.api.ecommerceweb.reponse.BasicUserInfoResponse;
+import com.api.ecommerceweb.reponse.UserDetailResponse;
 import com.api.ecommerceweb.request.*;
 import com.api.ecommerceweb.security.JwtTokenUtil;
+import com.api.ecommerceweb.service.BrandService;
 import com.api.ecommerceweb.service.MailService;
+import com.api.ecommerceweb.service.ShopService;
 import com.api.ecommerceweb.service.UserService;
 import com.api.ecommerceweb.utils.ValidationUtil;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
@@ -32,6 +36,7 @@ public class UserHelper {
     private final MailService mailService;
     private final ModelMapper modelMapper;
     private final JwtTokenUtil jwtTokenUtil;
+    private final ShopService shopService;
 
     public ResponseEntity<?> validationInputField(String input, String value) {
         if (input == null || value == null || input.trim().isBlank() || value.trim().isBlank())
@@ -211,7 +216,9 @@ public class UserHelper {
 
 
     public ResponseEntity<?> getCurrentUserDetails() {
-        BasicUserInfoResponse currentUserDetails = userService.getCurrentUserDetail();
+//        BasicUserInfoResponse currentUserDetails = userService.getCurrentUserDetail();
+        BasicUserInfoResponse user = userService.getCurrentUserDetail();
+        Object currentUserDetails = modelMapper.map(user, UserDetailResponse.class);
         return ResponseEntity.ok(BaseResponseBody.success(currentUserDetails, "Get current user detail success", null));
     }
 
@@ -219,9 +226,6 @@ public class UserHelper {
         return userService.updateCurrentUserDetails(accountUpdateRequest, multipartFile);
     }
 
-    public ResponseEntity<?> getFiles() {
-        return userService.getFiles();
-    }
 
     public ResponseEntity<?> getVerificationCode() {
         return userService.getVerificationCode();
@@ -264,4 +268,15 @@ public class UserHelper {
     }
 
 
+    public ResponseEntity<?> updateCurrentUserDetail(UpdateUserRequest request) {
+        User user = userService.getCurrentUser();
+        user.setFullName(request.getFullName());
+        Shop shop = user.getShop();
+        if (shop != null) {
+            shop.setName(request.getShopName());
+            shopService.saveShop(shop);
+        }
+        user.setGender(request.getGender());
+        return ResponseEntity.ok(BaseResponseBody.successMessage("update user detail success!"));
+    }
 }

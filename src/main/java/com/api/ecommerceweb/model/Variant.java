@@ -28,7 +28,7 @@ public class Variant {
             joinColumns = @JoinColumn(name = "variant_id"),
             inverseJoinColumns = @JoinColumn(name = "image_id")
     )
-    public List<File> images = new LinkedList();
+    public List<FileUpload> images = new LinkedList();
 
     @ManyToOne
     @JoinColumn(name = "product_id")

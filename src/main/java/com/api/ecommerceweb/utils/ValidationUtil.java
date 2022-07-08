@@ -1,5 +1,8 @@
 package com.api.ecommerceweb.utils;
 
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,4 +55,13 @@ public class ValidationUtil {
         }
         return false;
     }
+
+    public static boolean isImage(MultipartFile file) {
+        if(StringUtils.cleanPath(file.getOriginalFilename()).contains("..")){
+            return false;
+        }
+        String contentType = file.getContentType();
+        return contentType.equals("image/jpeg") || contentType.equals("image/png") || contentType.equals("application/octet-stream");
+    }
+
 }

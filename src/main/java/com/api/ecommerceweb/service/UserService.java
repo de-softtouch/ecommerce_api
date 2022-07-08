@@ -11,7 +11,6 @@ import com.api.ecommerceweb.repository.*;
 import com.api.ecommerceweb.request.*;
 import com.api.ecommerceweb.security.CustomUserDetails;
 import com.api.ecommerceweb.security.JwtTokenUtil;
-import com.api.ecommerceweb.utils.FileStorageUtil;
 import com.api.ecommerceweb.utils.MailUtil;
 import com.api.ecommerceweb.utils.ValidationUtil;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,6 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepo;
-    private final FileStorageUtil fileStorageUtil;
     private final MailUtil mailUtil;
     private final PasswordEncoder passwordEncoder;
     private final AddressRepository addressRepo;
@@ -69,16 +67,17 @@ public class UserService {
         map.put("fullName", accountUpdateRequest.getFullName());
         map.put("gender", accountUpdateRequest.getGender());
         //check file is image
-        if (multipartFile != null && !multipartFile.isEmpty()) {
-            boolean image = fileStorageUtil.isImage(multipartFile);
-            if (!image)
-                return ResponseEntity.badRequest().body("File is not image type");
-            //save file
-            String folder = user.getId().toString();
-            String savedFileName = fileStorageUtil.storeFile(multipartFile, folder);
-            map.put("profileImg", savedFileName);
-            user.setProfileImg(savedFileName);
-        }
+//        TODO:update user avt
+//        if (multipartFile != null && !multipartFile.isEmpty()) {
+//            boolean image = fileStorageUtil.isImage(multipartFile);
+//            if (!image)
+//                return ResponseEntity.badRequest().body("File is not image type");
+//            //save file
+//            String folder = user.getId().toString();
+//            String savedFileName = fileStorageUtil.storeFile(multipartFile, folder);
+//            map.put("profileImg", savedFileName);
+//            user.setProfileImg(savedFileName);
+//        }
         userRepo.save(user);
         return ResponseEntity.ok(map);
     }
@@ -189,12 +188,6 @@ public class UserService {
         return false;
     }
 
-    public ResponseEntity<?> getFiles() {
-        List<File> files = fileStorageUtil.getFiles(getCurrentUser().getId().toString());
-        return ResponseEntity.ok(
-                files.stream().map(File::getName).collect(Collectors.toList())
-        );
-    }
 
     public ResponseEntity<?> getVerificationCode() {
         User user = getCurrentUser();

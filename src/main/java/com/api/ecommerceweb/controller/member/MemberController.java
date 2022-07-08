@@ -52,7 +52,8 @@ public class MemberController {
 
     @GetMapping("/files")
     public ResponseEntity<?> getFiles() {
-        return userHelper.getFiles();
+//        return userHelper.getFiles();
+        return null;
     }
 
     @GetMapping("/verification")
@@ -101,7 +102,6 @@ public class MemberController {
         return productHelper.getShopProductDetail(productId);
     }
 
-
     @PostMapping("/users/shops")
     public ResponseEntity<?> registerShop(@RequestBody ShopRequest shopRequest) {
         return userHelper.registerShop(shopRequest);
@@ -112,6 +112,10 @@ public class MemberController {
         return userHelper.getCurrentUserDetails();
     }
 
+    @PostMapping("/users/me")
+    public ResponseEntity<?> updateCurrentUser(@RequestBody @Valid UpdateUserRequest request) {
+        return userHelper.updateCurrentUserDetail(request);
+    }
 
     @PostMapping("/users/update")
     public ResponseEntity<?> updateAccount(@RequestBody @Valid UpdateAccountRequest updateAccountRequest) {

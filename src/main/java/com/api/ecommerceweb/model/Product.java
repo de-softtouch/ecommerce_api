@@ -26,11 +26,11 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "cover_img_id")
-    private File coverImage;
+    private FileUpload coverImage;
 
     @ManyToOne
     @JoinColumn(name = "cover_vid_id")
-    private File coverVideo;
+    private FileUpload coverVideo;
 
     @OneToMany(mappedBy = "product")
     @OrderBy(value = "pos ASC ")

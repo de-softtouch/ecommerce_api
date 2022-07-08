@@ -33,6 +33,7 @@ public class ProductHelper {
     private final BrandService brandService;
     private final CategoryService categoryService;
     private final VariantOptionService variantOptionService;
+    private final ProductImageService productImageService;
 
     public ResponseEntity<?> getNewestProducts() {
         List<Product> newestProducts = productService.getNewestProducts();
@@ -114,6 +115,10 @@ public class ProductHelper {
             int solid = productService.countSolidNumber(product);
             ProductResponse productResponse = modelMapper.map(product, ProductResponse.class);
             productResponse.setSolid(solid);
+            List<ProductImage> images = productImageService.getProductImages(product, 1);
+            productResponse.setImages(images.stream()
+                    .map(i -> modelMapper.map(i, ProductImageResponse.class))
+                    .collect(Collectors.toList()));
             rs.add(productResponse);
         }
         return ResponseEntity.ok(BaseResponseBody.success(rs, "Fetch products success!", "Fetch products success!"));
@@ -138,7 +143,7 @@ public class ProductHelper {
                         ).collect(Collectors.toList());
                         variantResponse.setOptions(options);
                         variantResponse.setImages(variant.getImages().stream()
-                                .map(File::getName)
+                                .map(FileUpload::getName)
                                 .collect(Collectors.toCollection(LinkedList::new)));
                         return variantResponse;
                     })
@@ -159,7 +164,7 @@ public class ProductHelper {
                     .collect(Collectors.toCollection(LinkedList::new));
             productResponse.setModels(productModelResponses);
             //get images
-            List<ProductImage> productImages = product.getImages();
+            List<ProductImage> productImages = productImageService.getProductImages(product, 1);
             productResponse.setImages(
                     productImages.stream()
                             .map(productImage -> modelMapper.map(productImage, ProductImageResponse.class))
@@ -192,7 +197,7 @@ public class ProductHelper {
                                         .collect(Collectors.toList())
                         );
                         variantResponse.setImages(variant.getImages().stream()
-                                .map(File::getName)
+                                .map(FileUpload::getName)
                                 .collect(Collectors.toCollection(LinkedList::new)));
                         return variantResponse;
                     })
@@ -255,7 +260,7 @@ public class ProductHelper {
 
         Long coverImgId = productRequest.getCoverImage();
         if (coverImgId != null) {
-            File coverImage = fileUploadService.getFileById(coverImgId);
+            FileUpload coverImage = fileUploadService.getFileById(coverImgId);
             if (coverImage != null) {
                 product.setCoverImage(coverImage);
             }
@@ -298,6 +303,19 @@ public class ProductHelper {
             product.setCategory(categoryService.getByName("uncategory"));
         }
         product = productService.saveProduct(product);
+        //
+        Set<Long> images = productRequest.getImages();
+        for (Long id :
+                images) {
+            FileUpload fileUpload = fileUploadService.getFileById(id);
+            ProductImage productImage = new ProductImage();
+            productImage.setId(new ProductImgId(product.getId(), fileUpload.getId()));
+            productImage.setProduct(product);
+            productImage.setImage(fileUpload);
+            productImage.setStatus(1);
+            log.info("save product image");
+            productImageService.save(productImage);
+        }
         //variants
         List<VariantRequest> variantRequests = productRequest.getVariants();
         for (VariantRequest variantRequest : variantRequests) {
@@ -467,7 +485,7 @@ public class ProductHelper {
 
         Long coverImgId = productRequest.getCoverImage();
         if (coverImgId != null) {
-            File coverImage = fileUploadService.getFileById(coverImgId);
+            FileUpload coverImage = fileUploadService.getFileById(coverImgId);
             if (coverImage != null) {
                 product.setCoverImage(coverImage);
             }
@@ -619,25 +637,35 @@ public class ProductHelper {
         List<ProductResponse> data = products.stream()
                 .map(p -> {
                     ProductResponse productResponse = modelMapper.map(p, ProductResponse.class);
+                    //
+                    productResponse.setImages(
+                            productImageService.getProductImages(p, 1).stream()
+                                    .map(i -> modelMapper.map(i, ProductImageResponse.class))
+                                    .collect(Collectors.toList())
+                    );
                     //product models
                     List<ProductModel> productModels = productModelService.getProductModels(p, 1);
+
                     //
-                    AtomicReference<Integer> availableStock = new AtomicReference<>(0);
-                    List<ProductModelResponse> productModelResponses = productModels.stream()
-                            .map(model -> {
-                                availableStock.updateAndGet(v -> v + model.getStock());
-                                ProductModelResponse modelResponse = modelMapper.map(model, ProductModelResponse.class);
-                                List<VariantOption> variantOptions = model.getVariantOptions();
-                                for (VariantOption variantOption :
-                                        variantOptions) {
-                                    modelResponse.getVariantOptionIndexes().add(variantOption.getId());
-                                }
-                                return modelResponse;
-                            })
-                            .collect(Collectors.toCollection(LinkedList::new));
-                    productResponse.setStock(availableStock.get());
+                    //
+                        AtomicReference<Integer> availableStock = new AtomicReference<>(0);
+                        List<ProductModelResponse> productModelResponses = productModels.stream()
+                                .map(model -> {
+                                    availableStock.updateAndGet(v -> v + model.getStock());
+                                    ProductModelResponse modelResponse = modelMapper.map(model, ProductModelResponse.class);
+                                    List<VariantOption> variantOptions = model.getVariantOptions();
+                                    for (VariantOption variantOption :
+                                            variantOptions) {
+                                        modelResponse.getVariantOptionIndexes().add(variantOption.getId());
+                                    }
+                                    return modelResponse;
+                                })
+                                .collect(Collectors.toCollection(LinkedList::new));
+                        productResponse.setStock(availableStock.get());
                     productResponse.setSolid(productService.countSolidNumber(p));
-                    productResponse.setModels(productModelResponses);
+                    if(!productModels.isEmpty()){
+                        productResponse.setModels(productModelResponses);
+                    }
                     return productResponse;
                 })
                 .collect(Collectors.toList());

@@ -1,16 +1,18 @@
 package com.api.ecommerceweb.reponse;
 
 import com.api.ecommerceweb.model.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+import java.io.Serializable;
+
 @AllArgsConstructor
 @NoArgsConstructor
-public class BasicUserInfoResponse {
+@Getter
+@Setter
+public class BasicUserInfoResponse implements Serializable {
 
     private Long id;
+
     private String username;
 
     private String fullName;
@@ -20,9 +22,6 @@ public class BasicUserInfoResponse {
     private String email;
 
     private Integer gender;
-
-
-
 
 
 }

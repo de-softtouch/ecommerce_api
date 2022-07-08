@@ -13,8 +13,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class ProductImageResponse implements Serializable {
 
-    private Long id;
-
     private FileUploadResponse image;
 
     private String pos;

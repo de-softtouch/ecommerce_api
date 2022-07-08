@@ -3,11 +3,9 @@ package com.api.ecommerceweb.service;
 import com.api.ecommerceweb.dto.CategoryDTO;
 import com.api.ecommerceweb.mapper.CategoryMapper;
 import com.api.ecommerceweb.model.Category;
-import com.api.ecommerceweb.model.File;
 import com.api.ecommerceweb.repository.CategoryRepository;
 import com.api.ecommerceweb.repository.FileRepository;
 import com.api.ecommerceweb.request.CategoryRequest;
-import com.api.ecommerceweb.utils.FileStorageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +24,6 @@ import java.util.stream.Collectors;
 public class AdminService {
 
     private final CategoryRepository categoryRepo;
-    private final FileStorageUtil fileStorageUtil;
     private final FileRepository fileRepo;
 
     public ResponseEntity<?> getCategories() {
@@ -72,16 +69,17 @@ public class AdminService {
                 && categoryRepo.existsById(categoryRequest.getParentId())) {
             category.setParent(categoryRepo.getById(categoryRequest.getParentId()));
         }
-        if (file != null && !file.isEmpty() && fileStorageUtil.isImage(file)) {
-            File f = new File();
-            String fileName = fileStorageUtil.storeFile(file, "categories");
-            f.setName(fileName);
-            f.setSize(file.getSize());
-            f.setType(file.getContentType());
-            f.setCategory(category);
-            category.setImage(f);
-            fileRepo.save(f);
-        }
+//        TODO:save category image
+//        if (file != null && !file.isEmpty() && fileStorageUtil.isImage(file)) {
+//            File f = new File();
+//            String fileName = fileStorageUtil.storeFile(file, "categories");
+//            f.setName(fileName);
+//            f.setSize(file.getSize());
+//            f.setType(file.getContentType());
+//            f.setCategory(category);
+//            category.setImage(f);
+//            fileRepo.save(f);
+//        }
         categoryRepo.save(category);
         return ResponseEntity.ok("Update category success");
     }

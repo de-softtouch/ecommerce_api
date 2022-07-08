@@ -111,7 +111,7 @@ jdk.internal.reflect.DelegatingClassLoader {0x0000000800009338}
  - trans. interfaces: Array<T>(0x00000008005cf2a8)
  - constants:         constant pool [18] {0x00000008005d5e88} for 'jdk/internal/reflect/DelegatingClassLoader' cache=0x000000080000b370
  - class loader data:  loader data: 0x00000161e630ef10 of 'bootstrap'
- - source file:       'ClassDefiner.java'
+ - source fileUpload:       'ClassDefiner.java'
  - class annotations:       Array<T>(0x0000000000000000)
  - class type annotations:  Array<T>(0x0000000000000000)
  - field annotations:       Array<T>(0x0000000000000000)
@@ -161,7 +161,7 @@ jdk.internal.loader.ClassLoaders$AppClassLoader {0x000000080008ae50}
  - trans. interfaces: Array<T>(0x00000008005cf2a8)
  - constants:         constant pool [119] {0x0000000800664b88} for 'jdk/internal/loader/ClassLoaders$AppClassLoader' cache=0x000000080008b258
  - class loader data:  loader data: 0x00000161e630ef10 of 'bootstrap'
- - source file:       'ClassLoaders.java'
+ - source fileUpload:       'ClassLoaders.java'
  - class annotations:       Array<T>(0x0000000000000000)
  - class type annotations:  Array<T>(0x0000000000000000)
  - field annotations:       Array<T>(0x0000000000000000)

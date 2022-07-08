@@ -135,7 +135,7 @@ public class SellerService {
         //images and video
 
         if (productRequest.getCoverVideo() != null) {
-            Optional<File> optionalCoverVid = fileRepo.findByName(productRequest.getCoverVideo());
+            Optional<FileUpload> optionalCoverVid = fileRepo.findByName(productRequest.getCoverVideo());
             if (optionalCoverVid.isPresent()) {
                 product.setCoverVideo(optionalCoverVid.get());
             }

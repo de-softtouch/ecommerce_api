@@ -26,7 +26,7 @@ public class Category {
 
     @OneToOne
     @JoinColumn(name = "img_id")
-    private File image;
+    private FileUpload image;
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
