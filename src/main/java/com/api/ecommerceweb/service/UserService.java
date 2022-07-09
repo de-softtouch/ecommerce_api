@@ -52,10 +52,9 @@ public class UserService {
         return getById(userDetails.getId());
     }
 
-    public BasicUserInfoResponse getCurrentUserDetail() {
+    public User getCurrentUserDetail() {
         User user = getCurrentUser();
-        BasicUserInfoResponse userDetail = modelMapper.map(user, BasicUserInfoResponse.class);
-        return userDetail;
+        return user;
     }
 
     public ResponseEntity<?> updateCurrentUserDetails(AccountUpdateRequest accountUpdateRequest, MultipartFile multipartFile) {

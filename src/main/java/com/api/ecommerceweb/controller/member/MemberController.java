@@ -1,11 +1,9 @@
 package com.api.ecommerceweb.controller.member;
 
-import com.api.ecommerceweb.helper.FeedbackHelper;
-import com.api.ecommerceweb.helper.OrderHelper;
-import com.api.ecommerceweb.helper.ProductHelper;
-import com.api.ecommerceweb.helper.UserHelper;
+import com.api.ecommerceweb.helper.*;
 import com.api.ecommerceweb.request.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,17 +14,16 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/member")
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
 
     private final UserHelper userHelper;
     private final FeedbackHelper feedbackHelper;
     private final OrderHelper orderHelper;
     private final ProductHelper productHelper;
+    private final FileUploadHelper fileUploadHelper;
+    private final ShopHelper shopHelper;
 
-    @GetMapping
-    public ResponseEntity<?> getCurrentUserDetails() {
-        return userHelper.getCurrentUserDetails();
-    }
 
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<?> updateCurrentUserDetails(
@@ -50,11 +47,6 @@ public class MemberController {
         return userHelper.deleteAddress(id);
     }
 
-    @GetMapping("/files")
-    public ResponseEntity<?> getFiles() {
-//        return userHelper.getFiles();
-        return null;
-    }
 
     @GetMapping("/verification")
     public ResponseEntity<?> getVerificationCode() {
@@ -109,6 +101,7 @@ public class MemberController {
 
     @GetMapping("/users/me")
     public ResponseEntity<?> getCurrentUserDetail() {
+        log.info("get current user detail");
         return userHelper.getCurrentUserDetails();
     }
 
@@ -129,6 +122,11 @@ public class MemberController {
     @PostMapping("/shops/registration")
     public ResponseEntity<?> registrationShop(@RequestBody @Valid ShopRequest shopRequest) {
         return userHelper.registerShop(shopRequest);
+    }
+
+    @GetMapping("/shops/{id}")
+    public ResponseEntity<?> getShopDetail(@PathVariable Long id) {
+        return shopHelper.getShopDetail(id);
     }
 
     /*
@@ -152,9 +150,19 @@ public class MemberController {
 
     }
 
+    @PostMapping("/users/me/shop")
+    public ResponseEntity<?> updateShop(@Valid @RequestBody UpdateShopRequest request) {
+        return shopHelper.updateShop(request);
+    }
+
     @GetMapping("/users/me/shop/orders/status")
     public ResponseEntity<?> getOrderItemStatusReport(@RequestParam Map<String, String> param) {
         return orderHelper.getOrderItemStatusTypes();
 
+    }
+
+    @PostMapping("/files")
+    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
+        return fileUploadHelper.uploadFile(file);
     }
 }

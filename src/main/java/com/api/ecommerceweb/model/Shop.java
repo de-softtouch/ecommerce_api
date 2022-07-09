@@ -4,12 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "shops")
@@ -27,6 +26,8 @@ public class Shop {
     private String name;
 
     private String banner;
+
+    private String avt;
 
     @Column(nullable = false)
     private String description;
@@ -52,4 +53,15 @@ public class Shop {
     private Set<User> owners = new HashSet<>();
 
 
+    @CreationTimestamp
+    @Temporal(
+            TemporalType.DATE
+    )
+    private Date createDate;
+    @UpdateTimestamp
+
+    @Temporal(
+            TemporalType.DATE
+    )
+    private Date updateDate;
 }

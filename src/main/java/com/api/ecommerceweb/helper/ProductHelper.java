@@ -309,12 +309,14 @@ public class ProductHelper {
                 images) {
             FileUpload fileUpload = fileUploadService.getFileById(id);
             ProductImage productImage = new ProductImage();
-            productImage.setId(new ProductImgId(product.getId(), fileUpload.getId()));
-            productImage.setProduct(product);
-            productImage.setImage(fileUpload);
-            productImage.setStatus(1);
-            log.info("save product image");
-            productImageService.save(productImage);
+            if (productImageService.getProductImage(product, fileUpload) == null) {
+                productImage.setId(new ProductImgId(product.getId(), fileUpload.getId()));
+                productImage.setProduct(product);
+                productImage.setImage(fileUpload);
+                productImage.setStatus(1);
+                log.info("save product image");
+                productImageService.save(productImage);
+            }
         }
         //variants
         List<VariantRequest> variantRequests = productRequest.getVariants();
@@ -617,8 +619,8 @@ public class ProductHelper {
         resp.setShopId(shopId);
         resp.setModelName(productModel.getName());
         resp.setProductId(productId);
-        resp.setPrice(productModel.getPrice());
-        resp.setPriceBeforeDiscount(productModel.getPriceBeforeDiscount());
+        resp.setSalesPrice(productModel.getPrice());
+        resp.setStandardPrice(productModel.getPriceBeforeDiscount());
         resp.setMaxPurchaseQuantity(productModel.getMaxPurchaseQuantity());
         return ResponseEntity.ok(BaseResponseBody.success(resp, "get purchase quantity success", "success"));
     }
@@ -648,22 +650,22 @@ public class ProductHelper {
 
                     //
                     //
-                        AtomicReference<Integer> availableStock = new AtomicReference<>(0);
-                        List<ProductModelResponse> productModelResponses = productModels.stream()
-                                .map(model -> {
-                                    availableStock.updateAndGet(v -> v + model.getStock());
-                                    ProductModelResponse modelResponse = modelMapper.map(model, ProductModelResponse.class);
-                                    List<VariantOption> variantOptions = model.getVariantOptions();
-                                    for (VariantOption variantOption :
-                                            variantOptions) {
-                                        modelResponse.getVariantOptionIndexes().add(variantOption.getId());
-                                    }
-                                    return modelResponse;
-                                })
-                                .collect(Collectors.toCollection(LinkedList::new));
-                        productResponse.setStock(availableStock.get());
+                    AtomicReference<Integer> availableStock = new AtomicReference<>(0);
+                    List<ProductModelResponse> productModelResponses = productModels.stream()
+                            .map(model -> {
+                                availableStock.updateAndGet(v -> v + model.getStock());
+                                ProductModelResponse modelResponse = modelMapper.map(model, ProductModelResponse.class);
+                                List<VariantOption> variantOptions = model.getVariantOptions();
+                                for (VariantOption variantOption :
+                                        variantOptions) {
+                                    modelResponse.getVariantOptionIndexes().add(variantOption.getId());
+                                }
+                                return modelResponse;
+                            })
+                            .collect(Collectors.toCollection(LinkedList::new));
+                    productResponse.setStock(availableStock.get());
                     productResponse.setSolid(productService.countSolidNumber(p));
-                    if(!productModels.isEmpty()){
+                    if (!productModels.isEmpty()) {
                         productResponse.setModels(productModelResponses);
                     }
                     return productResponse;

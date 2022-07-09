@@ -216,9 +216,8 @@ public class UserHelper {
 
 
     public ResponseEntity<?> getCurrentUserDetails() {
-//        BasicUserInfoResponse currentUserDetails = userService.getCurrentUserDetail();
-        BasicUserInfoResponse user = userService.getCurrentUserDetail();
-        Object currentUserDetails = modelMapper.map(user, UserDetailResponse.class);
+        User user = userService.getCurrentUserDetail();
+        UserDetailResponse currentUserDetails = modelMapper.map(user, UserDetailResponse.class);
         return ResponseEntity.ok(BaseResponseBody.success(currentUserDetails, "Get current user detail success", null));
     }
 

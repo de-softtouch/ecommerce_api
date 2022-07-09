@@ -11,5 +11,7 @@ public class UpdateShopRequest {
 
     private String description;
 
+    private String avt;
+
     private Integer status =1;
 }

@@ -19,13 +19,13 @@ public class ProductPurchaseQuantityResponse implements Serializable {
 
     private String modelName;
 
-    private Integer stock;
+    private Integer stock = 0;
 
-    private Integer maxPurchaseQuantity;
+    private Integer maxPurchaseQuantity = 0;
 
-    private Double price;
+    private Double salesPrice = 0.0;
 
-    private Double priceBeforeDiscount;
+    private Double standardPrice = 0.0;
 
 
 }

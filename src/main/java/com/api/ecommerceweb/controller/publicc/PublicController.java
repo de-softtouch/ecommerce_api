@@ -20,6 +20,7 @@ public class PublicController {
     private final BrandHelper brandHelper;
     private final FileUploadHelper fileStorageHelper;
     private final FeedbackHelper feedbackHelper;
+    private final ShopHelper shopHelper;
 
     @GetMapping("/categories")
     public ResponseEntity<?> findAllNestedCategories() {
@@ -86,6 +87,11 @@ public class PublicController {
     @GetMapping("/files/{name}")
     public ResponseEntity<?> getFileByName(@PathVariable("name") String name) {
         return fileStorageHelper.getImage(name);
+    }
+
+    @GetMapping("/shops/{id}")
+    public ResponseEntity<?> getShopDetail(@PathVariable Long id) {
+        return shopHelper.getShopDetail(id);
     }
 
 
