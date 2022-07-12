@@ -44,5 +44,5 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     List<Map<String, Object>> countOrderItemStatusTypes(@Param("userId") Long ownerId);
 
 
-
+    List<OrderItem> findAllByOrder_IdAndProduct_Shop(Long orderId, Shop shop);
 }

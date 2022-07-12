@@ -21,4 +21,11 @@ public enum OrderStatus {
                 .filter(bl -> bl.code == code)
                 .findFirst();
     }
+
+    public static Optional<OrderStatus> fromName(String name) {
+        return Arrays.stream(values())
+                .filter(bl -> bl.name().equals(name))
+                .findFirst();
+    }
+
 }

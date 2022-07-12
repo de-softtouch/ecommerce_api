@@ -159,15 +159,15 @@ public class UserHelper {
             shop.setActive(0);
             shop.setName(shopRequest.getName());
             shop.setDescription(shopRequest.getDescription());
-            if (!shopRequest.getEmail().equals(user.getEmail())) {
-                return ResponseEntity.badRequest()
-                        .body(BaseResponseBody.badRequest("Shop's email is not match your email"));
-            }
+//            if (!shopRequest.getEmail().equals(user.getEmail())) {
+//                return ResponseEntity.badRequest()
+//                        .body(BaseResponseBody.badRequest("Shop's email is not match your email"));
+//            }
             shop.setEmail(shopRequest.getEmail());
-            if (!shopRequest.getPhone().equals(user.getPhone())) {
-                return ResponseEntity.badRequest()
-                        .body(BaseResponseBody.badRequest("Shop's phone is not match your phone number"));
-            }
+//            if (!shopRequest.getPhone().equals(user.getPhone())) {
+//                return ResponseEntity.badRequest()
+//                        .body(BaseResponseBody.badRequest("Shop's phone is not match your phone number"));
+//            }
             shop.setNumberPhone(shopRequest.getPhone());
             try {
                 String code = mailService.sendActiveShopCode(shopRequest.getEmail());

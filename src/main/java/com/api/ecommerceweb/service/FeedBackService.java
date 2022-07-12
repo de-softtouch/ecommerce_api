@@ -22,7 +22,7 @@ public class FeedBackService {
     }
 
     public List<Feedback> getShopFeedbacks(Shop shop) {
-        return repo.findAllByProduct_Shop(shop);
+        return repo.findAllByProduct_ShopOrderByCreateDateDesc(shop);
 
     }
 }

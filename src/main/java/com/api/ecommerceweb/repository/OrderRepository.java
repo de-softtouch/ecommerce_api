@@ -69,7 +69,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                     "WHERE u.id = :userId\n" +
                     "AND (:status IS NULL OR o.status = :status)\n" +
                     "AND (:status IS NULL OR oi.status = :status)\n" +
-                    "AND p.shop_id = s.id AND oi.product_id = p.id"
+                    "AND p.shop_id = s.id AND oi.product_id = p.id\n"
     )
-    List<Order> getShopOrders(@Param("userId") Long shopOwnerId, @Param("status") Integer status);
+    List<Order> getShopOrders(@Param("userId") Long shopOwnerId, @Param("status") Integer status,Pageable pageable);
+
+
 }

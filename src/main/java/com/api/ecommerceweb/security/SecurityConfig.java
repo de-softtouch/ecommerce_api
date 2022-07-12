@@ -82,6 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             config.addAllowedOrigin("http://localhost:3000");
             config.addAllowedHeader("*");
             config.addAllowedMethod("POST");
+            config.addAllowedMethod("PUT");
             config.addAllowedMethod("GET");
             config.addAllowedMethod("PATCH");
             config.addAllowedMethod("DELETE");

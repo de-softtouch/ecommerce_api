@@ -19,7 +19,7 @@ public class BaseParamRequest {
 
     private Integer page = 0;
 
-    private Integer pageSize = 15;
+    private Integer pageSize = 100;
 
     private Integer active = 1;
 

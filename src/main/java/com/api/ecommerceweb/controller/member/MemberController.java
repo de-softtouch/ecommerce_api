@@ -150,6 +150,11 @@ public class MemberController {
 
     }
 
+    @GetMapping("/users/me/shop/orders/{id}")
+    public ResponseEntity<?> getOrderById(@PathVariable Long id) {
+        return orderHelper.getOrder(id);
+    }
+
     @PostMapping("/users/me/shop")
     public ResponseEntity<?> updateShop(@Valid @RequestBody UpdateShopRequest request) {
         return shopHelper.updateShop(request);
@@ -158,6 +163,16 @@ public class MemberController {
     @GetMapping("/users/me/shop/orders/status")
     public ResponseEntity<?> getOrderItemStatusReport(@RequestParam Map<String, String> param) {
         return orderHelper.getOrderItemStatusTypes();
+    }
+
+    @PutMapping("/users/me/shop/orders/{orderId}/items/status")
+    public ResponseEntity<?> updateItemsStatus(@PathVariable("orderId") Long orderId, @RequestBody ItemStatusRequest request) {
+        return orderHelper.updateItemsStatus(orderId, request);
+    }
+
+    @GetMapping("/users/me/shop/orders/{orderId}/items")
+    public ResponseEntity<?> getOrderItems(@PathVariable("orderId") Long orderId) {
+        return orderHelper.getOrderItems(orderId);
 
     }
 

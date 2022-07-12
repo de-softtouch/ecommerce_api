@@ -19,5 +19,5 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
 
     List<Feedback> findByProduct(Product product);
 
-    List<Feedback> findAllByProduct_Shop(Shop shop);
+    List<Feedback> findAllByProduct_ShopOrderByCreateDateDesc(Shop shop);
 }

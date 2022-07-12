@@ -3,18 +3,23 @@ package com.api.ecommerceweb.helper;
 import com.api.ecommerceweb.enumm.OrderStatus;
 import com.api.ecommerceweb.model.*;
 import com.api.ecommerceweb.reponse.BaseResponseBody;
+import com.api.ecommerceweb.reponse.OrderItemResponse;
 import com.api.ecommerceweb.reponse.OrderResponse;
+import com.api.ecommerceweb.request.BaseParamRequest;
+import com.api.ecommerceweb.request.ItemStatusRequest;
 import com.api.ecommerceweb.request.OrderItemRequest;
 import com.api.ecommerceweb.request.OrderRequest;
 import com.api.ecommerceweb.service.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -100,10 +105,20 @@ public class OrderHelper {
     public ResponseEntity<?> getCurrentUserShopOrderItems(Map<String, String> param) {
         User currentUser = userService.getCurrentUser();
         String status = param.get("status");
-        List<Order> orderList = orderService.getShopOrders(currentUser.getId(), ValidationHelper.isNumeric(status) ? Integer.parseInt(status) : null);
-
+        BaseParamRequest baseParamRequest = new BaseParamRequest(param);
+        Pageable pageable = baseParamRequest.toPageRequest();
+        List<Order> orderList = orderService.getShopOrders(currentUser.getId(), ValidationHelper.isNumeric(status) ? Integer.parseInt(status) : null, pageable);
         List<OrderResponse> data = orderList.stream()
-                .map(o -> modelMapper.map(o, OrderResponse.class))
+                .map(o -> {
+                    OrderResponse orderResponse = modelMapper.map(o, OrderResponse.class);
+                    List<OrderItem> orderItems = orderItemService.getOrderItems(o.getId(), userService.getCurrentUserShop());
+                    orderResponse.setItems(
+                            orderItems.stream()
+                                    .map(oi -> modelMapper.map(oi, OrderItemResponse.class))
+                                    .collect(Collectors.toList())
+                    );
+                    return orderResponse;
+                })
                 .collect(Collectors.toList());
         return ResponseEntity.ok(BaseResponseBody.success(data, "get shop orders data success", "success"));
 
@@ -123,4 +138,33 @@ public class OrderHelper {
     }
 
 
+    public ResponseEntity<?> getOrderItems(Long orderId) {
+        User currentUser = userService.getCurrentUser();
+        Shop shop = currentUser.getShop();
+        List<OrderItem> orderItems = orderItemService.getOrderItems(orderId, shop);
+        List<OrderItemResponse> itemResponse = orderItems.stream()
+                .map(oi -> modelMapper.map(oi, OrderItemResponse.class))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(BaseResponseBody.success(itemResponse, null, null));
+    }
+
+    public ResponseEntity<?> getOrder(Long id) {
+        Order order = orderService.getOrder(id);
+        if (order != null) {
+            OrderResponse orderResponse = modelMapper.map(order, OrderResponse.class);
+            return ResponseEntity.ok(BaseResponseBody.success(orderResponse, null, null));
+        }
+        return null;
+    }
+
+
+    public ResponseEntity<?> updateItemsStatus(Long orderId, ItemStatusRequest request) {
+        List<OrderItem> items = orderItemService.getOrderItems(orderId, userService.getCurrentUserShop());
+        OrderStatus status = request.getStatus();
+        items.forEach(item -> {
+            item.setStatus(status);
+            orderItemService.save(item);
+        });
+        return ResponseEntity.ok(BaseResponseBody.success("Update item status to " + status.toString(), null, null));
+    }
 }

@@ -663,10 +663,13 @@ public class ProductHelper {
                                 return modelResponse;
                             })
                             .collect(Collectors.toCollection(LinkedList::new));
-                    productResponse.setStock(availableStock.get());
                     productResponse.setSolid(productService.countSolidNumber(p));
                     if (!productModels.isEmpty()) {
                         productResponse.setModels(productModelResponses);
+                        productResponse.setStock(availableStock.get());
+                    } else {
+                        productResponse.setStock(p.getStock());
+
                     }
                     return productResponse;
                 })
